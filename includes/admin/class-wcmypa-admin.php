@@ -99,6 +99,11 @@ class WCMYPA_Admin
         add_filter("manage_edit-shop_order_columns", [$this, "barcode_add_new_order_admin_list_column"], 10, 1);
         add_action("manage_shop_order_posts_custom_column", [$this, "addBarcodeToOrderColumn"], 10, 2);
 
+        // Add deliver day filter to order grid
+
+        add_filter( 'request', [$this, 'admin_delivery_day_filter'], 100 );
+        add_action('restrict_manage_posts', [$this, 'display_delivery_day'], 10, 1);
+
         add_action('woocommerce_payment_complete', [$this, 'automaticExportOrder'], 1000);
         add_action('woocommerce_order_status_changed', [$this, 'automaticExportOrder'], 1000, 3);
 
@@ -111,6 +116,83 @@ class WCMYPA_Admin
 
         add_action("woocommerce_product_options_shipping", [$this, "productOptionsFields"]);
         add_action("woocommerce_process_product_meta", [$this, "productOptionsFieldSave"]);
+    }
+
+    public function display_delivery_day() {
+
+        if (is_admin() && !empty($_GET['post_type']) && $_GET['post_type'] == 'shop_order'){
+
+
+//            $exp_types = array();
+//
+//            $zones = WC_Shipping_Zones::get_zones();
+//            foreach($zones as $z) {
+//                foreach($z['shipping_methods'] as $method) {
+//                    $exp_types[] = $method->title;
+//                }
+//            }
+
+            ?>
+            <select name="deliveryDate">
+                <option value=""><?php _e('Filter by delivery day', 'woocommerce'); ?></option>
+                <?php
+//                $current_v = isset($_GET['shipping_method']) ? $_GET['shipping_method'] : '';
+//                foreach ($exp_types as $label) {
+                $minimumDeliveryDay = 1;
+                $deliveryDayWindow = 14; // 14 is de instelling van de Leverdagen venster
+
+                while ($minimumDeliveryDay <= $deliveryDayWindow){
+                   $date = date('d-m-Y',strtotime('now' . '+' .$minimumDeliveryDay. 'days'));
+                    printf
+                    (
+                        '<option value="%s">%s</option>',
+                        $date,
+                        $date
+                    );
+                    $minimumDeliveryDay ++;
+                }
+                ?>
+            </select>
+            <?php
+        }
+    }
+
+    public function admin_delivery_day_filter($vars)
+    {
+        // Todo: kijk of de global $typenow weg kan
+        global $typenow;
+        $key = 'post__not_in';
+        //Todo: waarom staat hier shop order
+        if ('shop_order' == $typenow) {
+
+            if (isset($_GET['deliveryDate'])) {
+                if (! empty($key)) {
+
+                    // Todo: de value zou hij uit de selectie moeten halen
+                    // Todo: compare laat ook orders zien zonder _myparcel_delivery_options meta
+                    $vars[$key] = get_posts(
+                        [
+                            'posts_per_page' => -1,
+                            'post_type'      => 'shop_order',
+                            'post_status'    => 'any',
+                            'fields'         => 'ids',
+                            'orderby'        => 'date',
+                            'order'          => 'DESC',
+                            'meta_query'     => [
+                                [
+                                    'key'     => '_myparcel_delivery_options',
+//                                    'value'   => '2021-05-22',
+                                    'value'   => '{"carrier":"postnl","date":"2021-05-22T00:00:00.000Z","deliveryType":"standard","packageType":"package","isPickup":false,"pickupLocation":null,"shipmentOptions":{"signature":false,"insurance":null,"age_check":null,"only_recipient":false,"return":null,"large_format":null,"label_description":null}}',
+                                    'compare' => '!=',
+                                ],
+                            ],
+                        ]
+                    );
+                }
+            }
+        }
+
+        return $vars;
     }
 
     /**
@@ -136,6 +218,8 @@ class WCMYPA_Admin
 
         echo "<hr>";
     }
+
+
 
     /**
      * @param $loop
