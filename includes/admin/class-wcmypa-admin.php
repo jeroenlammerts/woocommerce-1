@@ -472,9 +472,9 @@ class WCMYPA_Admin
         $order_id = WCX_Order::get_id($order);
 
         $baseUrl      = "admin-ajax.php?action=" . WCMP_Export::EXPORT;
-        $addShipments = WCMP_Export::ADD_SHIPMENTS;
+        $addShipments = WCMP_Export::EXPORT_ORDER;
         $getLabels    = WCMP_Export::GET_LABELS;
-        $addReturn    = WCMP_Export::ADD_RETURN;
+        $addReturn    = WCMP_Export::EXPORT_RETURN;
 
         $returnShipmentId = $order->get_meta(self::META_RETURN_SHIPMENT_IDS);
 

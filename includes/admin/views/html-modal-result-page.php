@@ -6,7 +6,7 @@ include('html-start.php');
 /**
  * @var $request
  */
-if ($request === WCMP_Export::ADD_RETURN) {
+if ($request === WCMP_Export::EXPORT_RETURN) {
     printf('<h3>%s</h3>', __('Return email successfully sent to customer', 'woocommerce-myparcel'));
 }
 

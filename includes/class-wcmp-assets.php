@@ -71,8 +71,8 @@ class WCMP_Assets
                 "api_url"                => WCMP_Data::API_URL,
                 "actions"                => [
                     "export"        => WCMP_Export::EXPORT,
-                    "add_return"    => WCMP_Export::ADD_RETURN,
-                    "add_shipments" => WCMP_Export::ADD_SHIPMENTS,
+                    "export_return" => WCMP_Export::EXPORT_RETURN,
+                    "export_order"  => WCMP_Export::EXPORT_ORDER,
                     "get_labels"    => WCMP_Export::GET_LABELS,
                     "modal_dialog"  => WCMP_Export::MODAL_DIALOG,
                 ],
@@ -91,7 +91,7 @@ class WCMP_Assets
                 ),
                 "strings"                => [
                     "no_orders_selected" => __("You have not selected any orders!", "woocommerce-myparcel"),
-                    "dialog" => [
+                    "dialog"             => [
                         "return" => __("Export options", "woocommerce-myparcel")
                     ],
                 ],
