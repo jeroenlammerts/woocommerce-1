@@ -11,6 +11,15 @@ msgstr ""
 "Last-Translator: \n"
 "Language: fr_BE\n"
 
+msgid "setting_modus_title"
+msgstr ""
+
+msgid "setting_modus_traditional_title"
+msgstr ""
+
+msgid "setting_modus_pps_title"
+msgstr ""
+
 msgid "(Unknown)"
 msgstr "(Inconnu)"
 
@@ -80,7 +89,7 @@ msgid ""
 msgstr ""
 "Par défaut, une parcelle sera offert deux fois. Après deux tentatives "
 "infructueuses de livraison, le colis sera disponible au point le plus "
-"proche pick-up pendant deux semaines. Là, il peut ��tre repris par le "
+"proche pick-up pendant deux semaines. Là, il peut être repris par le "
 "destinataire de la note qui a été laissé par le courrier. Si vous souhaitez "
 "recevoir le colis de retour directement et non en avant au point de "
 "ramassage, activez cette option."
@@ -175,9 +184,6 @@ msgstr "livré - collecté"
 msgid "delivered - ready for pickup"
 msgstr "livré - prêt à être collecté"
 
-msgid "shipment_options_delivery"
-msgstr "Livré à la maison ou au travail"
-
 msgid "Delivery date"
 msgstr "Date de livraison"
 
@@ -186,12 +192,6 @@ msgstr "Fenêtre jours de livraison"
 
 msgid "Delivery information:"
 msgstr "Informations de livraison:"
-
-msgid "shipment_options_delivery_options_title"
-msgstr "Options de livraison - titre"
-
-msgid "shipment_options_delivery_title"
-msgstr "Titre de la livraison"
 
 msgid "Delivery type"
 msgstr "Type de livraison"
@@ -203,7 +203,7 @@ msgid "Diagnostic tools"
 msgstr "Outils de diagnostic"
 
 msgid "Digital stamp"
-msgstr "Timbre numérique"
+msgstr "Bezig met laden..."
 
 msgid "Disabled"
 msgstr "désactivé"
@@ -379,7 +379,7 @@ msgid "inactive - unknown"
 msgstr "inactif - inconnu"
 
 msgid "Insurance amount"
-msgstr "Montant d'assurance"
+msgstr "Bezig met laden..."
 
 msgid "Insure all orders that exceed this price point."
 msgstr "Assurer toutes les commandes qui dépassent ce prix."
@@ -397,10 +397,10 @@ msgid "Insured for"
 msgstr "Montant assuré"
 
 msgid "Insured shipment"
-msgstr "Expédition assuré"
+msgstr "Bezig met laden..."
 
 msgid "insured_amount"
-msgstr "Montant d'assurance"
+msgstr "Bezig met laden..."
 
 msgid "insured_for"
 msgstr "Montant assuré"
@@ -439,10 +439,10 @@ msgid "Log API communication"
 msgstr "Log de communication API"
 
 msgid "Mailbox"
-msgstr "Boites aux lettres"
+msgstr "Bezig met laden..."
 
 msgid "Max insured amount"
-msgstr "Max montant assuré"
+msgstr "Bezig met laden..."
 
 msgid "Missing country"
 msgstr "Pays manque"
@@ -451,13 +451,7 @@ msgid "Missing number"
 msgstr "Numéro manque"
 
 msgid "Monday delivery"
-msgstr "Livraison lundi"
-
-msgid "shipment_options_delivery_morning"
-msgstr "Livraison le matin"
-
-msgid "shipment_options_delivery_morning_title"
-msgstr "Titre de la livraison du matin"
+msgstr "Bezig met laden..."
 
 msgid "MyParcel"
 msgstr "MyParcel"
@@ -543,14 +537,8 @@ msgstr "Ramasser à"
 msgid "Pick up from"
 msgstr "Collecte à partir de"
 
-msgid "shipment_options_delivery_pickup"
-msgstr "Ramasser"
-
 msgid "Pickup location"
 msgstr "Lieu de ramassage"
-
-msgid "shipment_options_delivery_pickup_title"
-msgstr "Titre du ramassage"
 
 msgid "pickup_location"
 msgstr "Lieu de ramassage"
@@ -668,6 +656,12 @@ msgstr ""
 "Crea un envoi dans MyParcel quand l'état du commande change. Pour recevoir "
 "le barcode sélectionnez 'Traiter immédiatement les envois' aussi."
 
+msgid "feature_allow_show_delivery_date_title"
+msgstr "Afficher la date de livraison"
+
+msgid "feature_allow_show_delivery_date_help_text"
+msgstr "Affiche la date de livraison parmi les options à la caisse."
+
 msgid "Settings"
 msgstr "Paramètres"
 
@@ -719,11 +713,34 @@ msgstr ""
 "uniquement chez le destinataire' sont inclus. Cette option ne peut pas être "
 "combinée avec la livraison le matin ou le soir."
 
+msgid "shipment_options_delivery"
+msgstr "Livré à la maison ou au travail"
+
 msgid "shipment_options_delivery_evening"
 msgstr "Livraison en soirée"
 
 msgid "shipment_options_delivery_evening_title"
 msgstr "Titre de la livraison du soir"
+
+msgid "shipment_options_delivery_morning"
+msgstr "Livraison le matin"
+
+msgid "shipment_options_delivery_morning_title"
+msgstr "Titre de la livraison du matin"
+
+msgid "shipment_options_delivery_options_title"
+msgstr "Options de livraison - titre"
+
+msgid "shipment_options_delivery_options_title_description"
+msgstr ""
+"Vous pouvez indiquer un titre pour la livraison au-dessus des options "
+"MyParcel. S'il n'y a pas de titre, cet élément ne sera pas visible."
+
+msgid "shipment_options_delivery_pickup"
+msgstr "Ramasser"
+
+msgid "shipment_options_delivery_pickup_title"
+msgstr "Titre du ramassage"
 
 msgid "shipment_options_delivery_standard_description"
 msgstr ""
@@ -732,6 +749,9 @@ msgstr ""
 
 msgid "shipment_options_delivery_standard_title"
 msgstr "Livraison standard - titre"
+
+msgid "shipment_options_delivery_title"
+msgstr "Titre de la livraison"
 
 msgid "shipment_options_insured"
 msgstr "Expédition assuré"
@@ -816,15 +836,13 @@ msgstr "Afficher après les données d'expédition"
 msgid "Show after subtotal"
 msgstr "Afficher après le sous-total"
 
-msgid "Show delivery date"
-msgstr "Afficher la date de livraison"
+msgid "setting_show_delivery_day_title"
+msgstr "Date de livraison dans communication"
 
-msgid ""
-"Show delivery day options allow your customers to see the delivery day in "
-"order confirmation and My Account."
+msgid "setting_show_delivery_day_help_text"
 msgstr ""
-"L'option « Afficher la date de livraison » permet à vos clients de voir la "
-"date de livraison dans les confirmations de commande et Mon compte."
+"Cette option permet à vos clients de voir la date de livraison dans les "
+"confirmations de commande et Mon compte."
 
 msgid "Show Track & Trace trace code and link in My Account."
 msgstr "Montrer le code et le lien Track & Trace dans Mon Compte."
@@ -1031,11 +1049,6 @@ msgstr ""
 msgid "You can change the text before the barcode inside an note"
 msgstr "Vous pouvez modifier le texte du code-barres dans une note"
 
-msgid "shipment_options_delivery_options_title_description"
-msgstr ""
-"Vous pouvez indiquer un titre pour la livraison au-dessus des options "
-"MyParcel. S'il n'y a pas de titre, cet élément ne sera pas visible."
-
 msgid "You can track your order with the following Track & Trace link:"
 msgstr "Vous pouvez suivre votre commande via le code Track & Trace suivant :"
 
@@ -1049,3 +1062,6 @@ msgid "You have to export the orders to MyParcel before you can print the labels
 msgstr ""
 "Vous devez d'abord exporter vos commandes vers MyParcel avant de pouvoir "
 "imprimer vos étiquettes !"
+
+msgid "shipment_options_delivery_standard"
+msgstr "Livraison Standard"
