@@ -119,57 +119,35 @@ class WCMYPA_Admin
     }
 
     /**
-     * @param string $name
      *
-     * @return mixed
      */
-    private function getSetting(string $name)
+    public function display_delivery_day()
     {
-        return WCMYPA()->setting_collection->getByName($name);
-    }
-
-    public function display_delivery_day() {
-
-        if (is_admin() && !empty($_GET['post_type']) && $_GET['post_type'] == 'shop_order'){
-
-
-//            $exp_types = array();
-//
-//            $zones = WC_Shipping_Zones::get_zones();
-//            foreach($zones as $z) {
-//                foreach($z['shipping_methods'] as $method) {
-//                    $exp_types[] = $method->title;
-//                }
-//            }
-
+        if (is_admin() && ! empty($_GET['post_type']) && $_GET['post_type'] == 'shop_order') {
             ?>
             <select name="deliveryDate">
                 <option value=""><?php _e('Filter by delivery day', 'woocommerce'); ?></option>
                 <?php
-//                $current_v = isset($_GET['shipping_method']) ? $_GET['shipping_method'] : '';
-//                foreach ($exp_types as $label) {
+
                 $minimumDeliveryDay = 1;
-                $deliveryDayWindow = $this->getSetting(WCMYPA_Settings::SETTING_CARRIER_DROP_OFF_DAYS);
+                $carrierName        = WCMYPA_Settings::SETTINGS_POSTNL;
+                $deliveryDayWindow  = WCMYPA()->setting_collection->getByName(
+                    $carrierName . "_" . WCMYPA_Settings::SETTING_CARRIER_DELIVERY_DAYS_WINDOW
+                );
 
-                // 14 is de instelling
-                // van de Leverdagen venster
-
-                while ($minimumDeliveryDay <= $deliveryDayWindow){
-                   $date = date('d-m-Y',strtotime('now' . '+' .$minimumDeliveryDay. 'days'));
-                    printf
-                    (
+                while ($minimumDeliveryDay <= $deliveryDayWindow) {
+                    $date = date('d-m-Y', strtotime('now' . '+' . $minimumDeliveryDay . 'days'));
+                    printf(
                         '<option value="%s">%s</option>',
                         $date,
                         $date
                     );
-                    $minimumDeliveryDay ++;
+                    $minimumDeliveryDay++;
                 }
                 ?>
             </select>
             <?php
         }
-        var_dump($deliveryDayWindow);
-        echo("\n|-------------\n" . __FILE__ . ':' . __LINE__ . "\n|-------------\n");
     }
 
     public function admin_delivery_day_filter($vars)
