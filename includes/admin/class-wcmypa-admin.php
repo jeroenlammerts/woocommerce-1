@@ -118,6 +118,16 @@ class WCMYPA_Admin
         add_action("woocommerce_process_product_meta", [$this, "productOptionsFieldSave"]);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return mixed
+     */
+    private function getSetting(string $name)
+    {
+        return WCMYPA()->setting_collection->getByName($name);
+    }
+
     public function display_delivery_day() {
 
         if (is_admin() && !empty($_GET['post_type']) && $_GET['post_type'] == 'shop_order'){
@@ -139,7 +149,10 @@ class WCMYPA_Admin
 //                $current_v = isset($_GET['shipping_method']) ? $_GET['shipping_method'] : '';
 //                foreach ($exp_types as $label) {
                 $minimumDeliveryDay = 1;
-                $deliveryDayWindow = 14; // 14 is de instelling van de Leverdagen venster
+                $deliveryDayWindow = $this->getSetting(WCMYPA_Settings::SETTING_CARRIER_DROP_OFF_DAYS);
+
+                // 14 is de instelling
+                // van de Leverdagen venster
 
                 while ($minimumDeliveryDay <= $deliveryDayWindow){
                    $date = date('d-m-Y',strtotime('now' . '+' .$minimumDeliveryDay. 'days'));
@@ -155,6 +168,8 @@ class WCMYPA_Admin
             </select>
             <?php
         }
+        var_dump($deliveryDayWindow);
+        echo("\n|-------------\n" . __FILE__ . ':' . __LINE__ . "\n|-------------\n");
     }
 
     public function admin_delivery_day_filter($vars)
