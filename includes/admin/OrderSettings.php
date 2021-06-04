@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractDeliveryOptionsAdapter;
 use MyParcelNL\Sdk\src\Factory\ConsignmentFactory;
+use MyParcelNL\Sdk\src\Model\Recipient;
 use MyParcelNL\Sdk\src\Support\Arr;
 use WPO\WC\MyParcel\Compatibility\Order as WCX_Order;
 use WPO\WC\MyParcel\Compatibility\Product as WCX_Product;
@@ -104,6 +105,16 @@ class OrderSettings
     private $shippingCountry;
 
     /**
+     * @var Recipient
+     */
+    private $shippingAddress;
+
+    /**
+     * @var Recipient
+     */
+    private $billingAddress;
+
+    /**
      * @param WC_Order                                                                              $order
      * @param \MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractDeliveryOptionsAdapter|array|null $deliveryOptions
      *
@@ -122,8 +133,49 @@ class OrderSettings
         $this->shippingCountry = WCX_Order::get_prop($order, 'shipping_country');
         $this->extraOptions    = WCMYPA_Admin::getExtraOptionsFromOrder($order);
 
+        $this->setBillingAddress()->setShippingAddress();
+
         $this->setAllData();
     }
+    //TODO shipping and billing to be removed to adapter
+    public function setShippingAddress(): self
+    {
+        $this->shippingAddress = (new Recipient())
+            ->setCc($this->order->get_shipping_country())
+            ->setCity($this->order->get_shipping_city())
+            ->setCompany($this->order->get_shipping_company())
+            //->setEmail($this->order->get_)
+            ->setPerson(substr($this->order->get_formatted_shipping_full_name(), 0, 50))
+            //->setPhone($this->order->get_shipping)
+            ->setPostalCode($this->order->get_shipping_postcode())
+            ->setStreet(substr($this->order->get_shipping_address_1(), 0, 40));
+
+        return $this;
+    }
+    public function getShippingAddress(): ?Recipient
+    {
+        return $this->shippingAddress;
+    }
+
+    public function setBillingAddress(): self
+    {
+        $this->billingAddress = (new Recipient())
+            ->setCc($this->order->get_billing_country())
+            ->setCity($this->order->get_billing_city())
+            ->setCompany($this->order->get_billing_company())
+            ->setEmail($this->order->get_billing_email())
+            ->setPerson(substr($this->order->get_formatted_billing_full_name(), 0, 50))
+            ->setPhone($this->order->get_billing_phone())
+            ->setPostalCode($this->order->get_billing_postcode())
+            ->setStreet(substr($this->order->get_billing_address_1(), 0, 40));
+
+        return $this;
+    }
+    public function getBillingAddress(): ?Recipient
+    {
+        return $this->shippingAddress;
+    }
+
 
     /**
      * @param bool $inGrams

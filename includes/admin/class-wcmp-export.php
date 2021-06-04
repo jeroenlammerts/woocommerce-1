@@ -4,9 +4,14 @@ use MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractDeliveryOptionsAdapter;
 use MyParcelNL\Sdk\src\Exception\ApiException;
 use MyParcelNL\Sdk\src\Exception\MissingFieldException;
 use MyParcelNL\Sdk\src\Helper\MyParcelCollection;
+use MyParcelNL\Sdk\src\Collection\Fulfilment\OrderCollection;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 use MyParcelNL\Sdk\src\Model\Consignment\PostNLConsignment;
+use MyParcelNL\Sdk\src\Model\Fulfilment\Order;
+use MyParcelNL\Sdk\src\Model\Fulfilment\OrderLine;
+use MyParcelNL\Sdk\src\Model\Fulfilment\Product;
 use MyParcelNL\Sdk\src\Support\Arr;
+use MyParcelNL\Sdk\src\Support\Collection;
 use MyParcelNL\Sdk\src\Support\Str;
 use WPO\WC\MyParcel\Compatibility\Order as WCX_Order;
 use WPO\WC\MyParcel\Compatibility\WC_Core as WCX;
@@ -1590,6 +1595,7 @@ class WCMP_Export
         switch ($exportMode) {
             case WCMP_Settings_Data::EXPORT_MODE_PPS:
                 // TODO make pps export using sdk
+                $this->saveOrderCollection($orderIds);
                 $process = ('yes' === $print);
                 $return  = $this->addShipments($orderIds, $process);
                 break;
@@ -1602,23 +1608,100 @@ class WCMP_Export
 
         }
 
-        $this->setFeedbackForClient($print, $orderIds, $return);
+        $this->setFeedbackForClient($print, $offset, $orderIds, $return);
 
         return $return;
     }
 
     /**
+     * @throws \Exception
+     */
+    private function saveOrderCollection(array $orderIds): void
+    {
+        $apiKey = $this->getSetting(WCMYPA_Settings::SETTING_API_KEY);
+
+        $orderCollection = (new OrderCollection())->setApiKey($apiKey);
+
+        // todo: make adapters for ordersettings (incl. address 2 receiver conversion) and products / orderlines
+        // todo e.g. sdk-order-from-wc-order-adapter and sdk-orderline-from-wc-orderline-product-adapter
+
+        foreach ($orderIds as $index => $orderId) {
+            $wcOrder = WCX::get_order($orderId);
+            $orderSettings = new OrderSettings($wcOrder);
+            $deliveryOptions = $orderSettings->getDeliveryOptions();
+
+            $order = (new Order())
+                ->setStatus($wcOrder->get_status())
+                ->setDeliveryOptions($deliveryOptions)
+                //->setExternalIdentifier($faker->uuid)
+                //->setFulfilmentPartnerIdentifier($faker->uuid)
+                ->setInvoiceAddress($orderSettings->getBillingAddress())
+                ->setRecipient($orderSettings->getShippingAddress())
+                ->setLanguage('NL')
+                ->setType(null) // what do we want here?
+                //->setOrderDate((new DateTime())->format('Y-M-d'));
+                ->setOrderDate($wcOrder->get_date_created()); // Y-m-d H:i:s
+
+            $orderLines = new Collection();
+
+            foreach ($wcOrder->get_items() as $key => $wcOrderItem) {
+                $itemData = $wcOrderItem->get_data();
+                // todo get the original product, to have dimensions, weight and sku and the like
+                // todo put the meta (like color, size, and such choices) into the description
+                // todo check if price per product or price per line is required...
+                $vat           = (int) ($itemData['subtotal_tax'] * 100.0);
+                $price         = (int) ($itemData['subtotal'] * 100.0);
+                $priceAfterVat = $price + $vat;
+                $product       = (new Product())
+                    ->setDescription($itemData['name'])
+                    ->setEan($itemData['ean'] ?? null)
+                    //->setExternalIdentifier($faker->uuid)
+                    ->setName($itemData['name'])
+                    ->setSku($itemData['sku'] ?? null)
+                    ->setUuid($itemData['product_id'] . '-' . $itemData['variation_id'])
+                    ->setHeight(0)
+                    ->setLength(0)
+                    ->setWeight(0)
+                    ->setWidth(0);
+
+                $orderLine = (new OrderLine())
+                    //->setUuid($faker->uuid)
+                    //->setInstructions([
+                    //    'wrapping' => implode(' ', $faker->words(4))
+                    //])
+                    ->setQuantity($wcOrderItem->get_quantity())
+                    ->setPrice($price)
+                    ->setPriceAfterVat($priceAfterVat)
+                    // TODO: After MY-28691 is merged only passing $vat is sufficient.
+                    ->setVat($vat === 0 ? null : $vat)
+                    ->setProduct($product);
+
+
+                $orderLines->push($orderLine);
+            }
+
+            $order->setOrderLines($orderLines);
+            $orderCollection->push($order);
+        }
+        var_dump($orderCollection);
+        die();
+
+        $savedOrderCollection = $orderCollection->save();
+    }
+
+    /**
      * @param string $print
+     * @param int    $offset
      * @param array  $orderIds
      * @param array  $return
      */
-    private function setFeedbackForClient (string $print, array $orderIds, array $return): void
+    private function setFeedbackForClient (string $print, int $offset, array $orderIds, array $return): void
     {
         // When adding shipments, store $return for use in admin_notice
         // This way we can refresh the page (JS) to show all new buttons
-        if ($print === 'no' || $print === 'after_reload') {
+        if (in_array($print, ['no', 'after_reload'])) {
             update_option('wcmyparcel_admin_notices', $return);
-            if ($print === 'after_reload') {
+            if ('after_reload' === $print) {
                 $print_queue = [
                     'order_ids'    => $orderIds,
                     'shipment_ids' => $return['success_ids'],
