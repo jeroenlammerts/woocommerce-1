@@ -28,6 +28,7 @@ class WCMYPA_Admin
     public const META_LAST_SHIPMENT_IDS      = "_myparcel_last_shipment_ids";
     public const META_RETURN_SHIPMENT_IDS    = "_myparcel_return_shipment_ids";
     public const META_ORDER_VERSION          = "_myparcel_order_version";
+    public const META_DELIVERY_DATE          = "_myparcel_delivery_date";
     public const META_PGADDRESS              = "_myparcel_pgaddress";
     public const META_SHIPMENTS              = "_myparcel_shipments";
     public const META_SHIPMENT_OPTIONS_EXTRA = "_myparcel_shipment_options_extra";
@@ -130,6 +131,8 @@ class WCMYPA_Admin
                     <?php
 
                     $minimumDeliveryDay = 1;
+                    // TODO: foreach maken voor verschillende carriers en dan de hoogste deliveryday window pakken
+                    // TODO: uitkomst is voor $carrierName
                     $carrierName        = WCMYPA_Settings::SETTINGS_POSTNL;
                     $deliveryDayWindow  = WCMYPA()->setting_collection->getByName(
                         $carrierName . "_" . WCMYPA_Settings::SETTING_CARRIER_DELIVERY_DAYS_WINDOW
@@ -175,9 +178,10 @@ class WCMYPA_Admin
                             'order'          => 'DESC',
                             'meta_query'     => [
                                 [
-                                    'key'     => '_myparcel_delivery_options',
-//                                    'value'   => '2021-05-22',
-                                    'value'   => '{"carrier":"postnl","date":"2021-05-22T00:00:00.000Z","deliveryType":"standard","packageType":"package","isPickup":false,"pickupLocation":null,"shipmentOptions":{"signature":false,"insurance":null,"age_check":null,"only_recipient":false,"return":null,"large_format":null,"label_description":null}}',
+                                    'key'     => '_myparcel_delivery_date',
+                                   'value'   => $_GET['deliveryDate'],
+                              //      'value'   => '{"carrier":"postnl","date":"2021-06-10T00:00:00.000Z",
+                                    //"deliveryType":"standard","packageType":"package","isPickup":false,"pickupLocation":null,"shipmentOptions":{"signature":false,"insurance":null,"age_check":null,"only_recipient":false,"return":null,"large_format":null,"label_description":null}}',
                                     'compare' => '!=',
                                 ],
                             ],

@@ -410,7 +410,17 @@ class WCMP_Checkout
                 WCMYPA_Admin::META_DELIVERY_OPTIONS,
                 $deliveryOptions->toArray()
             );
+
+            /**
+             * Save the current version of our plugin to the order.
+             */
+            WCX_Order::update_meta_data(
+                $order,
+                WCMYPA_Admin::META_DELIVERY_DATE,
+                $deliveryOptions->getDate()
+            );
         }
+
     }
 
     /**
