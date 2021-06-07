@@ -123,8 +123,17 @@ class WCMYPA_Admin
      */
     public function display_delivery_day()
     {
+        global $typenow;
+
+        if ( 'shop_order' != $typenow ) {
+            return;
+        }
+
         if (is_admin() && ! empty($_GET['post_type']) && $_GET['post_type'] == 'shop_order') {
+
+            $selected = ( isset( $_GET['deliveryDate'] ) ? sanitize_text_field( $_GET['deliveryDate'] ) : false );
             ?>
+
             <label>
                 <select name="deliveryDate">
                     <option value=""><?php _e('Filter by delivery day', 'woocommerce'); ?></option>
@@ -139,12 +148,15 @@ class WCMYPA_Admin
                     );
 
                     while ($minimumDeliveryDay <= $deliveryDayWindow) {
-                        $date = date('d-m-Y', strtotime('now' . '+' . $minimumDeliveryDay . 'days'));
+                        $date = date('Y-m-d', strtotime('now' . '+' . $minimumDeliveryDay . 'days'));
+                        $dayDate = wc_format_datetime(new WC_DateTime($date), 'D d-m');
+
                         printf(
                             '<option value="%s">%s</option>',
                             $date,
-                            $date
+                            $dayDate
                         );
+
                         $minimumDeliveryDay++;
                     }
                     ?>
@@ -161,31 +173,28 @@ class WCMYPA_Admin
      */
     public function admin_delivery_day_filter($vars)
     {
+        global $typenow;
         $key = 'post__not_in';
+        if ('shop_order' == $typenow) {
+            if (isset($_GET['deliveryDate']) && $_GET['deliveryDate'] != '') {
+                if (! empty($key)) {
+                    // Todo: compare laat ook orders zien zonder _myparcel_delivery_options meta
+                    $vars[$key] = get_posts(
+                        [
 
-        if (isset($_GET['deliveryDate'])) {
-            if (! empty($key)) {
-                // Todo: de value zou hij uit de selectie moeten halen
-                // Todo: compare laat ook orders zien zonder _myparcel_delivery_options meta
-                $vars[$key] = get_posts(
-                    [
-                        'posts_per_page' => -1,
-                        'post_type'      => 'shop_order',
-                        'post_status'    => 'any',
-                        'fields'         => 'ids',
-                        'orderby'        => 'date',
-                        'order'          => 'DESC',
-                        'meta_query'     => [
-                            [
-                                'key'     => '_myparcel_delivery_date',
-                                'value'   => $_GET['deliveryDate'],
-                                'compare' => '!=',
+                            'meta_query'     => [
+                                [
+                                    'key'     => '_myparcel_delivery_date',
+                                    'value'   => sanitize_text_field($_GET['deliveryDate']),
+                                    'compare' => '=',
+                                ],
                             ],
-                        ],
-                    ]
-                );
+                        ]
+                    );
+                }
             }
         }
+
 
         return $vars;
     }

@@ -412,12 +412,12 @@ class WCMP_Checkout
             );
 
             /**
-             * Save meta deliverday for filter in ordergrid
+             * Save meta deliverdate for filter in ordergrid
              */
             WCX_Order::update_meta_data(
                 $order,
                 WCMYPA_Admin::META_DELIVERY_DATE,
-                $deliveryOptions->getDate()
+                wc_format_datetime(new WC_DateTime($deliveryOptions->getDate()), 'Y-m-d')
             );
         }
 
