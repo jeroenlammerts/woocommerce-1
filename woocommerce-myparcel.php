@@ -163,6 +163,7 @@ if (! class_exists('WCMYPA')) :
             require_once($this->includes . "/adapter/delivery-options-from-order-adapter.php");
             require_once($this->includes . "/adapter/pickup-location-from-order-adapter.php");
             require_once($this->includes . "/adapter/shipment-options-from-order-adapter.php");
+            require_once($this->includes . "/adapter/sdk-order-item-from-wc-order-line.php");
             require_once($this->includes . "/admin/class-wcmp-export-consignments.php");
         }
 

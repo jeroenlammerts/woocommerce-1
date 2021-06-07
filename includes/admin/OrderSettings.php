@@ -107,12 +107,12 @@ class OrderSettings
     /**
      * @var Recipient
      */
-    private $shippingAddress;
+    private $shippingRecipient;
 
     /**
      * @var Recipient
      */
-    private $billingAddress;
+    private $billingRecipient;
 
     /**
      * @param WC_Order                                                                              $order
@@ -133,47 +133,47 @@ class OrderSettings
         $this->shippingCountry = WCX_Order::get_prop($order, 'shipping_country');
         $this->extraOptions    = WCMYPA_Admin::getExtraOptionsFromOrder($order);
 
-        $this->setBillingAddress()->setShippingAddress();
-
         $this->setAllData();
     }
-    //TODO shipping and billing to be removed to adapter
-    public function setShippingAddress(): self
+
+    public function setShippingRecipient(): self
     {
-        $this->shippingAddress = (new Recipient())
-            ->setCc($this->order->get_shipping_country())
-            ->setCity($this->order->get_shipping_city())
-            ->setCompany($this->order->get_shipping_company())
-            //->setEmail($this->order->get_)
-            ->setPerson(substr($this->order->get_formatted_shipping_full_name(), 0, 50))
-            //->setPhone($this->order->get_shipping)
-            ->setPostalCode($this->order->get_shipping_postcode())
-            ->setStreet(substr($this->order->get_shipping_address_1(), 0, 40));
+        $thisOrder               = $this->order;
+        $this->shippingRecipient = (new Recipient())
+            ->setCc($thisOrder->get_shipping_country())
+            ->setCity($thisOrder->get_shipping_city())
+            ->setCompany($thisOrder->get_shipping_company())
+            //->setEmail($thisOrder->get_)
+            ->setPerson(substr($thisOrder->get_formatted_shipping_full_name(), 0, 50))
+            //->setPhone($thisOrder->get_shipping)
+            ->setPostalCode($thisOrder->get_shipping_postcode())
+            ->setStreet(substr($thisOrder->get_shipping_address_1(), 0, 40));
 
         return $this;
     }
-    public function getShippingAddress(): ?Recipient
+    public function getShippingRecipient(): ?Recipient
     {
-        return $this->shippingAddress;
+        return $this->shippingRecipient;
     }
 
-    public function setBillingAddress(): self
+    public function setBillingRecipient(): self
     {
-        $this->billingAddress = (new Recipient())
-            ->setCc($this->order->get_billing_country())
-            ->setCity($this->order->get_billing_city())
-            ->setCompany($this->order->get_billing_company())
-            ->setEmail($this->order->get_billing_email())
-            ->setPerson(substr($this->order->get_formatted_billing_full_name(), 0, 50))
-            ->setPhone($this->order->get_billing_phone())
-            ->setPostalCode($this->order->get_billing_postcode())
-            ->setStreet(substr($this->order->get_billing_address_1(), 0, 40));
+        $thisOrder              = $this->order;
+        $this->billingRecipient = (new Recipient())
+            ->setCc($thisOrder->get_billing_country())
+            ->setCity($thisOrder->get_billing_city())
+            ->setCompany($thisOrder->get_billing_company())
+            ->setEmail($thisOrder->get_billing_email())
+            ->setPerson(substr($thisOrder->get_formatted_billing_full_name(), 0, 50))
+            ->setPhone($thisOrder->get_billing_phone())
+            ->setPostalCode($thisOrder->get_billing_postcode())
+            ->setStreet(substr($thisOrder->get_billing_address_1(), 0, 40));
 
         return $this;
     }
-    public function getBillingAddress(): ?Recipient
+    public function getBillingRecipient(): ?Recipient
     {
-        return $this->shippingAddress;
+        return $this->shippingRecipient;
     }
 
 
@@ -282,6 +282,8 @@ class OrderSettings
      */
     private function setAllData(): void
     {
+        $this->setBillingRecipient()->setShippingRecipient();
+
         $this->setPackageType();
         $this->setColloAmount();
         $this->setLabelDescription();

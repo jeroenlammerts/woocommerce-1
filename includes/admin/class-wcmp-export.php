@@ -8,8 +8,6 @@ use MyParcelNL\Sdk\src\Collection\Fulfilment\OrderCollection;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 use MyParcelNL\Sdk\src\Model\Consignment\PostNLConsignment;
 use MyParcelNL\Sdk\src\Model\Fulfilment\Order;
-use MyParcelNL\Sdk\src\Model\Fulfilment\OrderLine;
-use MyParcelNL\Sdk\src\Model\Fulfilment\Product;
 use MyParcelNL\Sdk\src\Support\Arr;
 use MyParcelNL\Sdk\src\Support\Collection;
 use MyParcelNL\Sdk\src\Support\Str;
@@ -1618,16 +1616,13 @@ class WCMP_Export
      */
     private function saveOrderCollection(array $orderIds): void
     {
-        $apiKey = $this->getSetting(WCMYPA_Settings::SETTING_API_KEY);
-
+        $apiKey          = $this->getSetting(WCMYPA_Settings::SETTING_API_KEY);
         $orderCollection = (new OrderCollection())->setApiKey($apiKey);
-
-        // todo: make adapters for ordersettings (incl. address 2 receiver conversion) and products / orderlines
-        // todo e.g. sdk-order-from-wc-order-adapter and sdk-orderline-from-wc-orderline-product-adapter
+        $locale          = get_option('WPLANG', 'nl_NL');
 
         foreach ($orderIds as $index => $orderId) {
-            $wcOrder = WCX::get_order($orderId);
-            $orderSettings = new OrderSettings($wcOrder);
+            $wcOrder         = WCX::get_order($orderId);
+            $orderSettings   = new OrderSettings($wcOrder);
             $deliveryOptions = $orderSettings->getDeliveryOptions();
 
             $order = (new Order())
@@ -1635,49 +1630,18 @@ class WCMP_Export
                 ->setDeliveryOptions($deliveryOptions)
                 //->setExternalIdentifier($faker->uuid)
                 //->setFulfilmentPartnerIdentifier($faker->uuid)
-                ->setInvoiceAddress($orderSettings->getBillingAddress())
-                ->setRecipient($orderSettings->getShippingAddress())
-                ->setLanguage('NL')
+                ->setInvoiceAddress($orderSettings->getBillingRecipient())
+                ->setRecipient($orderSettings->getShippingRecipient())
+                ->setLanguage($locale)
                 ->setType(null) // what do we want here?
-                //->setOrderDate((new DateTime())->format('Y-M-d'));
-                ->setOrderDate($wcOrder->get_date_created()); // Y-m-d H:i:s
+                ->setOrderDate($wcOrder->get_date_created()); // Y-M-d H:i:s
 
             $orderLines = new Collection();
 
-            foreach ($wcOrder->get_items() as $key => $wcOrderItem) {
-                $itemData = $wcOrderItem->get_data();
-                // todo get the original product, to have dimensions, weight and sku and the like
-                // todo put the meta (like color, size, and such choices) into the description
-                // todo check if price per product or price per line is required...
-                $vat           = (int) ($itemData['subtotal_tax'] * 100.0);
-                $price         = (int) ($itemData['subtotal'] * 100.0);
-                $priceAfterVat = $price + $vat;
-                $product       = (new Product())
-                    ->setDescription($itemData['name'])
-                    ->setEan($itemData['ean'] ?? null)
-                    //->setExternalIdentifier($faker->uuid)
-                    ->setName($itemData['name'])
-                    ->setSku($itemData['sku'] ?? null)
-                    ->setUuid($itemData['product_id'] . '-' . $itemData['variation_id'])
-                    ->setHeight(0)
-                    ->setLength(0)
-                    ->setWeight(0)
-                    ->setWidth(0);
+            foreach ($wcOrder->get_items() as $wcOrderItem) {
+                $orderLine = new WCMP_SdkOrderItemFromWcOrderLine(null, $wcOrderItem);
 
-                $orderLine = (new OrderLine())
-                    //->setUuid($faker->uuid)
-                    //->setInstructions([
-                    //    'wrapping' => implode(' ', $faker->words(4))
-                    //])
-                    ->setQuantity($wcOrderItem->get_quantity())
-                    ->setPrice($price)
-                    ->setPriceAfterVat($priceAfterVat)
-                    // TODO: After MY-28691 is merged only passing $vat is sufficient.
-                    ->setVat($vat === 0 ? null : $vat)
-                    ->setProduct($product);
-
-
-                $orderLines->push($orderLine);
+                $orderLines->push($orderLine->getOrderLine());
             }
 
             $order->setOrderLines($orderLines);
@@ -1688,6 +1652,7 @@ class WCMP_Export
 
         $savedOrderCollection = $orderCollection->save();
     }
+
 
     /**
      * @param string $print
