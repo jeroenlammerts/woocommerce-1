@@ -100,8 +100,7 @@ class WCMYPA_Admin
         add_action("manage_shop_order_posts_custom_column", [$this, "addBarcodeToOrderColumn"], 10, 2);
 
         // Add deliver day filter to order grid
-
-        add_filter( 'request', [$this, 'admin_delivery_day_filter'], 100 );
+        add_filter('request', [$this, 'admin_delivery_day_filter'], 10, 1);
         add_action('restrict_manage_posts', [$this, 'display_delivery_day'], 10, 1);
 
         add_action('woocommerce_payment_complete', [$this, 'automaticExportOrder'], 1000);
@@ -125,38 +124,41 @@ class WCMYPA_Admin
     {
         if (is_admin() && ! empty($_GET['post_type']) && $_GET['post_type'] == 'shop_order') {
             ?>
-            <select name="deliveryDate">
-                <option value=""><?php _e('Filter by delivery day', 'woocommerce'); ?></option>
-                <?php
+            <label>
+                <select name="deliveryDate">
+                    <option value=""><?php _e('Filter by delivery day', 'woocommerce'); ?></option>
+                    <?php
 
-                $minimumDeliveryDay = 1;
-                $carrierName        = WCMYPA_Settings::SETTINGS_POSTNL;
-                $deliveryDayWindow  = WCMYPA()->setting_collection->getByName(
-                    $carrierName . "_" . WCMYPA_Settings::SETTING_CARRIER_DELIVERY_DAYS_WINDOW
-                );
-
-                while ($minimumDeliveryDay <= $deliveryDayWindow) {
-                    $date = date('d-m-Y', strtotime('now' . '+' . $minimumDeliveryDay . 'days'));
-                    printf(
-                        '<option value="%s">%s</option>',
-                        $date,
-                        $date
+                    $minimumDeliveryDay = 1;
+                    $carrierName        = WCMYPA_Settings::SETTINGS_POSTNL;
+                    $deliveryDayWindow  = WCMYPA()->setting_collection->getByName(
+                        $carrierName . "_" . WCMYPA_Settings::SETTING_CARRIER_DELIVERY_DAYS_WINDOW
                     );
-                    $minimumDeliveryDay++;
-                }
-                ?>
-            </select>
+
+                    while ($minimumDeliveryDay <= $deliveryDayWindow) {
+                        $date = date('d-m-Y', strtotime('now' . '+' . $minimumDeliveryDay . 'days'));
+                        printf(
+                            '<option value="%s">%s</option>',
+                            $date,
+                            $date
+                        );
+                        $minimumDeliveryDay++;
+                    }
+                    ?>
+                </select>
+            </label>
             <?php
         }
     }
 
+    /**
+     * @param $vars
+     *
+     * @return mixed
+     */
     public function admin_delivery_day_filter($vars)
     {
-        // Todo: kijk of de global $typenow weg kan
-        global $typenow;
         $key = 'post__not_in';
-        //Todo: waarom staat hier shop order
-        if ('shop_order' == $typenow) {
 
             if (isset($_GET['deliveryDate'])) {
                 if (! empty($key)) {
@@ -183,7 +185,6 @@ class WCMYPA_Admin
                     );
                 }
             }
-        }
 
         return $vars;
     }
