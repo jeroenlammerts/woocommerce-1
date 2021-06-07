@@ -163,32 +163,29 @@ class WCMYPA_Admin
     {
         $key = 'post__not_in';
 
-            if (isset($_GET['deliveryDate'])) {
-                if (! empty($key)) {
-
-                    // Todo: de value zou hij uit de selectie moeten halen
-                    // Todo: compare laat ook orders zien zonder _myparcel_delivery_options meta
-                    $vars[$key] = get_posts(
-                        [
-                            'posts_per_page' => -1,
-                            'post_type'      => 'shop_order',
-                            'post_status'    => 'any',
-                            'fields'         => 'ids',
-                            'orderby'        => 'date',
-                            'order'          => 'DESC',
-                            'meta_query'     => [
-                                [
-                                    'key'     => '_myparcel_delivery_date',
-                                   'value'   => $_GET['deliveryDate'],
-                              //      'value'   => '{"carrier":"postnl","date":"2021-06-10T00:00:00.000Z",
-                                    //"deliveryType":"standard","packageType":"package","isPickup":false,"pickupLocation":null,"shipmentOptions":{"signature":false,"insurance":null,"age_check":null,"only_recipient":false,"return":null,"large_format":null,"label_description":null}}',
-                                    'compare' => '!=',
-                                ],
+        if (isset($_GET['deliveryDate'])) {
+            if (! empty($key)) {
+                // Todo: de value zou hij uit de selectie moeten halen
+                // Todo: compare laat ook orders zien zonder _myparcel_delivery_options meta
+                $vars[$key] = get_posts(
+                    [
+                        'posts_per_page' => -1,
+                        'post_type'      => 'shop_order',
+                        'post_status'    => 'any',
+                        'fields'         => 'ids',
+                        'orderby'        => 'date',
+                        'order'          => 'DESC',
+                        'meta_query'     => [
+                            [
+                                'key'     => '_myparcel_delivery_date',
+                                'value'   => $_GET['deliveryDate'],
+                                'compare' => '!=',
                             ],
-                        ]
-                    );
-                }
+                        ],
+                    ]
+                );
             }
+        }
 
         return $vars;
     }
