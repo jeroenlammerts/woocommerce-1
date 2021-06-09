@@ -420,7 +420,6 @@ class WCMP_Checkout
                 wc_format_datetime(new WC_DateTime($deliveryOptions->getDate()), 'Y-m-d')
             );
         }
-
     }
 
     /**
