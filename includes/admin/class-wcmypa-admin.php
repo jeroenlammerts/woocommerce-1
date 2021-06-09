@@ -101,8 +101,8 @@ class WCMYPA_Admin
         add_action("manage_shop_order_posts_custom_column", [$this, "addBarcodeToOrderColumn"], 10, 2);
 
         // Add deliver day filter to order grid
-        add_action('restrict_manage_posts', [$this, 'woo_st_restrict_manage_posts']);
-        add_filter('request', [$this, 'woo_st_request_query']);
+        add_action('restrict_manage_posts', [$this, 'wcmypaRestrictManagePosts'], 10, 1);
+        add_filter('request', [$this, 'wcmypaRequestQuery'], 10, 1);
 
         add_action('woocommerce_payment_complete', [$this, 'automaticExportOrder'], 1000);
         add_action('woocommerce_order_status_changed', [$this, 'automaticExportOrder'], 1000, 3);
@@ -118,29 +118,32 @@ class WCMYPA_Admin
         add_action("woocommerce_process_product_meta", [$this, "productOptionsFieldSave"]);
     }
 
-    public function woo_st_restrict_manage_posts()
+    /**
+     * @throws \Exception
+     */
+    public function wcmypaRestrictManagePosts(): void
     {
         global $typenow;
 
         if (in_array($typenow, wc_get_order_types('order-meta-boxes'))) {
-            $this->woo_st_shop_order_filters();
+            $this->wcmypaDeliveryDayFilters();
         }
     }
 
     /**
      * @throws \Exception
      */
-    public function woo_st_shop_order_filters()
+    public function wcmypaDeliveryDayFilters(): void
     {
-        if (apply_filters('woo_st_shop_order_billing_country_filter', true)) {
-            $this->woo_st_shop_order_billing_country_filter();
+        if (apply_filters('wcmypaDeliveryDayFilter', true)) {
+            $this->wcmypaDeliveryDayFilter();
         }
     }
 
     /**
      * @throws \Exception
      */
-    public function woo_st_shop_order_billing_country_filter(): void
+    public function wcmypaDeliveryDayFilter(): void
     {
         if (is_admin() && ! empty($_GET['post_type']) && $_GET['post_type'] == 'shop_order') {
             $selected = (isset($_GET['deliveryDate'])
@@ -149,11 +152,8 @@ class WCMYPA_Admin
             ?>
 
             <select name="deliveryDate">
-                <option value=""><?php _e('Filter by delivery day', 'woocommerce'); ?></option>
+                <option value=""><?php _e('All delivery days', 'woocommerce-myparcel'); ?></option>
                 <?php
-
-                // TODO: foreach maken voor verschillende carriers en dan de hoogste deliveryday window pakken
-                // TODO: uitkomst is voor $carrierName
                 $carrierName       = WCMYPA_Settings::SETTINGS_POSTNL;
                 $deliveryDayWindow = (int) WCMYPA()->setting_collection->getByName(
                     $carrierName . "_" . WCMYPA_Settings::SETTING_CARRIER_DELIVERY_DAYS_WINDOW
@@ -179,12 +179,11 @@ class WCMYPA_Admin
      *
      * @return array
      */
-    public function woo_st_request_query($vars): array
+    public function wcmypaRequestQuery($vars): array
     {
         global $typenow;
 
         if (in_array($typenow, wc_get_order_types('order-meta-boxes'))) {
-            // Billing country
             if (isset($_GET['deliveryDate'])) {
                 $vars['meta_query'] = [
                     [
