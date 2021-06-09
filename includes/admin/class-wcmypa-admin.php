@@ -101,8 +101,8 @@ class WCMYPA_Admin
         add_action("manage_shop_order_posts_custom_column", [$this, "addBarcodeToOrderColumn"], 10, 2);
 
         // Add deliver day filter to order grid
-        add_action('restrict_manage_posts', [$this, 'wcmypaRestrictManagePosts'], 10, 1);
-        add_filter('request', [$this, 'wcmypaRequestQuery'], 10, 1);
+        add_action('restrict_manage_posts', [$this, 'restrictManagePosts'], 10, 1);
+        add_filter('request', [$this, 'requestQuery'], 10, 1);
 
         add_action('woocommerce_payment_complete', [$this, 'automaticExportOrder'], 1000);
         add_action('woocommerce_order_status_changed', [$this, 'automaticExportOrder'], 1000, 3);
@@ -121,29 +121,29 @@ class WCMYPA_Admin
     /**
      * @throws \Exception
      */
-    public function wcmypaRestrictManagePosts(): void
+    public function restrictManagePosts(): void
     {
         global $typenow;
 
         if (in_array($typenow, wc_get_order_types('order-meta-boxes'))) {
-            $this->wcmypaDeliveryDayFilters();
+            $this->deliveryDayFilters();
         }
     }
 
     /**
      * @throws \Exception
      */
-    public function wcmypaDeliveryDayFilters(): void
+    public function deliveryDayFilters(): void
     {
-        if (apply_filters('wcmypaDeliveryDayFilter', true)) {
-            $this->wcmypaDeliveryDayFilter();
+        if (apply_filters('deliveryDayFilter', true)) {
+            $this->deliveryDayFilter();
         }
     }
 
     /**
      * @throws \Exception
      */
-    public function wcmypaDeliveryDayFilter(): void
+    public function deliveryDayFilter(): void
     {
         if (is_admin() && ! empty($_GET['post_type']) && $_GET['post_type'] == 'shop_order') {
             $selected = (isset($_GET['deliveryDate'])
@@ -152,7 +152,7 @@ class WCMYPA_Admin
             ?>
 
             <select name="deliveryDate">
-                <option value=""><?php _e('All delivery days', 'woocommerce-myparcel'); ?></option>
+                <option value=""><?php _e('all_delivery_days', 'woocommerce-myparcel'); ?></option>
                 <?php
                 $carrierName       = WCMYPA_Settings::SETTINGS_POSTNL;
                 $deliveryDayWindow = (int) WCMYPA()->setting_collection->getByName(
@@ -179,12 +179,12 @@ class WCMYPA_Admin
      *
      * @return array
      */
-    public function wcmypaRequestQuery($vars): array
+    public function requestQuery($vars): array
     {
         global $typenow;
 
         if (in_array($typenow, wc_get_order_types('order-meta-boxes'))) {
-            if (isset($_GET['deliveryDate'])) {
+            if (isset($_GET['deliveryDate']) && !empty($_GET['deliveryDate'])) {
                 $vars['meta_query'] = [
                     [
                         'key'     => '_myparcel_delivery_date',
@@ -236,9 +236,9 @@ class WCMYPA_Admin
                 'id'            => self::META_HS_CODE_VARIATION . "[{$loop}]",
                 'name'          => self::META_HS_CODE_VARIATION . "[{$loop}]",
                 'value'         => get_post_meta($variation->ID, self::META_HS_CODE_VARIATION, true),
-                'label'         => __('HS Code', 'woocommerce'),
+                'label'         => __('hs_code', 'woocommerce-myparcel'),
                 'desc_tip'      => true,
-                'description'   => __('This HS Code overwrites the parents HS Code.', 'woocommerce'),
+                'description'   => __('hs_code_variations.', 'woocommerce-myparcel'),
                 'wrapper_class' => 'form-row form-row-full',
             ]
         );
