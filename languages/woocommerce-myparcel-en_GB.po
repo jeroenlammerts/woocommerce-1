@@ -11,6 +11,15 @@ msgstr ""
 "Last-Translator: \n"
 "Language: en_GB\n"
 
+msgid "setting_modus_title"
+msgstr "Mode"
+
+msgid "setting_modus_traditional_title"
+msgstr "Traditional"
+
+msgid "setting_modus_pps_title"
+msgstr "Orders/package slip"
+
 msgid "(Unknown)"
 msgstr "(Unknown)"
 
@@ -264,6 +273,9 @@ msgstr ""
 "want to give a discount for using this function or do you want to charge "
 "extra for this delivery option."
 
+msgid "error_order_has_invalid_shipment_country"
+msgstr "Order %s has an invalid shipping country."
+
 msgid "error_api_for_order_%s_no_shipments_created"
 msgstr "MyParcel API error at order %s, no shipments created."
 
@@ -312,7 +324,7 @@ msgstr "House number"
 msgid "How to update your PHP version"
 msgstr "How to update your PHP version"
 
-msgid "HS Code"
+msgid "hs_code"
 msgstr "HS Code"
 
 msgid ""
@@ -812,15 +824,13 @@ msgstr "Show after shipping details"
 msgid "Show after subtotal"
 msgstr "Show after subtotal"
 
-msgid "Show delivery date"
-msgstr "Show delivery date"
+msgid "setting_show_delivery_day_title"
+msgstr "Delivery date in customer communication"
 
-msgid ""
-"Show delivery day options allow your customers to see the delivery day in "
-"order confirmation and My Account."
+msgid "setting_show_delivery_day_help_text"
 msgstr ""
-"The \"Show delivery date\" option allows your customers to see the delivery "
-"date in order confirmations and My Account."
+"This option allows your customers to see the delivery date in order "
+"confirmations and My Account."
 
 msgid "Show Track & Trace trace code and link in My Account."
 msgstr "Show Track & Trace code and link in My Account."
@@ -1032,3 +1042,9 @@ msgstr "You have to export the orders to MyParcel before you can print the label
 
 msgid "shipment_options_delivery_standard"
 msgstr "Standard delivery"
+
+msgid "hs_code_variations"
+msgstr "This HS Code overwrites the parents HS Code"
+
+msgid "all_delivery_days"
+msgstr "All delivery days"

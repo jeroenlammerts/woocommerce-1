@@ -11,6 +11,15 @@ msgstr ""
 "Last-Translator: \n"
 "Language: nl_NL\n"
 
+msgid "setting_modus_title"
+msgstr "Modus"
+
+msgid "setting_modus_traditional_title"
+msgstr "Traditioneel"
+
+msgid "setting_modus_pps_title"
+msgstr "Orders/pakbon"
+
 msgid "(Unknown)"
 msgstr "(Onbekend)"
 
@@ -263,6 +272,9 @@ msgstr ""
 "bijvoorbeeld korting geven voor het gebruiken van deze functie of wil je "
 "extra kosten rekenen voor deze bezorgoptie."
 
+msgid "error_order_has_invalid_shipment_country"
+msgstr "Bestelling %s heeft een ongeldig land als bestemming."
+
 msgid "error_api_for_order_%s_no_shipments_created"
 msgstr "MyParcel API error bij order %s, geen zendingen aangemaakt."
 
@@ -311,7 +323,7 @@ msgstr "Huisnummer"
 msgid "How to update your PHP version"
 msgstr "Hoe update je jouw PHP versie"
 
-msgid "HS Code"
+msgid "hs_code"
 msgstr "HS Code"
 
 msgid ""
@@ -817,15 +829,13 @@ msgstr "Toon na verzendgegevens"
 msgid "Show after subtotal"
 msgstr "Toon na subtotalen"
 
-msgid "Show delivery date"
-msgstr "Toon bezorgdatum"
+msgid "setting_show_delivery_day_title"
+msgstr "Toon bezorgdatum in klantcommunicatie"
 
-msgid ""
-"Show delivery day options allow your customers to see the delivery day in "
-"order confirmation and My Account."
+msgid "setting_show_delivery_day_help_text"
 msgstr ""
-"De optie \"Toon bezorgdatum\" laat je klanten de bezorgdag zien in "
-"orderbevestigingen en Mijn Account."
+"Deze optie laat je klanten de bezorgdag zien in orderbevestigingen en Mijn "
+"Account."
 
 msgid "Show Track & Trace trace code and link in My Account."
 msgstr "Toon Track & Trace code en link in Mijn Account."
@@ -1046,3 +1056,9 @@ msgstr ""
 
 msgid "shipment_options_delivery_standard"
 msgstr "Standaard bezorging"
+
+msgid "hs_code_variations"
+msgstr "Deze HS-code overschrijft de HS-code"
+
+msgid "all_delivery_days"
+msgstr "Alle bezorgdagen"
