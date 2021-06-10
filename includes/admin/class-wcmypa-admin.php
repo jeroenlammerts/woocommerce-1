@@ -307,6 +307,24 @@ class WCMYPA_Admin
     }
 
     /**
+     * @return array
+     */
+    public function getActiveMyParcelBulkActions(): array
+    {
+        $exportMode = WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_EXPORT_MODE);
+
+        return (WCMP_Settings_Data::EXPORT_MODE_PPS === $exportMode)
+            ? [
+                self::BULK_ACTION_EXPORT => __('myparcel_bulk_action_export', 'woocommerce-myparcel'),
+            ]
+            : [
+                self::BULK_ACTION_EXPORT       => __('myparcel_bulk_action_export', 'woocommerce-myparcel'),
+                self::BULK_ACTION_PRINT        => __('myparcel_bulk_action_print', 'woocommerce-myparcel'),
+                self::BULK_ACTION_EXPORT_PRINT => __('myparcel_bulk_action_export_print', 'woocommerce-myparcel'),
+            ];
+    }
+
+    /**
      * Add export option to bulk action drop down menu.
      *
      * @param array $actions
@@ -318,11 +336,7 @@ class WCMYPA_Admin
     {
         $actions = array_merge(
             $actions,
-            [
-                self::BULK_ACTION_EXPORT       => __("MyParcel: Export", "woocommerce-myparcel"),
-                self::BULK_ACTION_PRINT        => __("MyParcel: Print", "woocommerce-myparcel"),
-                self::BULK_ACTION_EXPORT_PRINT => __("MyParcel: Export & Print", "woocommerce-myparcel"),
-            ]
+            $this->getActiveMyParcelBulkActions()
         );
 
         self::renderSpinner('bulkAction');
@@ -342,13 +356,10 @@ class WCMYPA_Admin
     public function bulk_actions()
     {
         global $post_type;
-        $bulk_actions = [
-            self::BULK_ACTION_EXPORT       => __("MyParcel: Export", "woocommerce-myparcel"),
-            self::BULK_ACTION_PRINT        => __("MyParcel: Print", "woocommerce-myparcel"),
-            self::BULK_ACTION_EXPORT_PRINT => __("MyParcel: Export & Print", "woocommerce-myparcel"),
-        ];
 
-        if ('shop_order' == $post_type) {
+        $bulk_actions = $this->getActiveMyParcelBulkActions();
+
+        if ('shop_order' === $post_type) {
             ?>
             <script type="text/javascript">
               jQuery(document).ready(function () {
@@ -469,14 +480,15 @@ class WCMYPA_Admin
             return;
         }
 
-        $order_id = WCX_Order::get_id($order);
+        $order_id   = WCX_Order::get_id($order);
+        $exportMode = WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_EXPORT_MODE);
 
         $baseUrl      = "admin-ajax.php?action=" . WCMP_Export::EXPORT;
         $addShipments = WCMP_Export::EXPORT_ORDER;
         $getLabels    = WCMP_Export::GET_LABELS;
         $addReturn    = WCMP_Export::EXPORT_RETURN;
 
-        $returnShipmentId = $order->get_meta(self::META_RETURN_SHIPMENT_IDS);
+        //$returnShipmentId = $order->get_meta(self::META_RETURN_SHIPMENT_IDS);
 
         $listing_actions = [
             $addShipments => [
@@ -495,6 +507,10 @@ class WCMYPA_Admin
                 "alt" => __("Email return label", "woocommerce-myparcel"),
             ],
         ];
+
+        if (WCMP_Settings_Data::EXPORT_MODE_PPS === $exportMode) {
+            unset($listing_actions[$getLabels]);
+        }
 
         $consignments = self::get_order_shipments($order);
 

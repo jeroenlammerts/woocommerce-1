@@ -15,10 +15,10 @@ msgid "setting_modus_title"
 msgstr "Mode"
 
 msgid "setting_modus_traditional_title"
-msgstr "Traditional"
+msgstr "Export shipping details only"
 
 msgid "setting_modus_pps_title"
-msgstr "Orders/package slip"
+msgstr "Export entire order"
 
 msgid "(Unknown)"
 msgstr "(Unknown)"
@@ -273,6 +273,9 @@ msgstr ""
 "want to give a discount for using this function or do you want to charge "
 "extra for this delivery option."
 
+msgid "error_order_has_invalid_shipment_country"
+msgstr "Order %s has an invalid shipping country."
+
 msgid "error_api_for_order_%s_no_shipments_created"
 msgstr "MyParcel API error at order %s, no shipments created."
 
@@ -321,7 +324,7 @@ msgstr "House number"
 msgid "How to update your PHP version"
 msgstr "How to update your PHP version"
 
-msgid "HS Code"
+msgid "hs_code"
 msgstr "HS Code"
 
 msgid ""
@@ -1039,3 +1042,12 @@ msgstr "You have to export the orders to MyParcel before you can print the label
 
 msgid "shipment_options_delivery_standard"
 msgstr "Standard delivery"
+
+msgid "hs_code_variations"
+msgstr "This HS Code overwrites the parents HS Code"
+
+msgid "all_delivery_days"
+msgstr "All delivery days"
+
+msgid "setting_modus_help_text"
+msgstr ""

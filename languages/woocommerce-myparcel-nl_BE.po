@@ -15,10 +15,13 @@ msgid "setting_modus_title"
 msgstr "Modus"
 
 msgid "setting_modus_traditional_title"
-msgstr "Traditioneel"
+msgstr "Exporteer alleen verzendinformatie"
 
 msgid "setting_modus_pps_title"
-msgstr "Orders/pakbon"
+msgstr "Exporteer volledige order"
+
+msgid "setting_modus_help_text"
+msgstr ""
 
 msgid "(Unknown)"
 msgstr "(Onbekend)"
@@ -272,6 +275,9 @@ msgstr ""
 "bijvoorbeeld korting geven voor het gebruiken van deze functie of wil je "
 "extra kosten rekenen voor deze bezorgoptie."
 
+msgid "error_order_has_invalid_shipment_country"
+msgstr "Bestelling %s heeft een ongeldig land als bestemming."
+
 msgid "error_api_for_order_%s_no_shipments_created"
 msgstr "MyParcel API error bij order %s, geen zendingen aangemaakt."
 
@@ -320,7 +326,7 @@ msgstr "Huisnummer"
 msgid "How to update your PHP version"
 msgstr "Hoe update je jouw PHP versie"
 
-msgid "HS Code"
+msgid "hs_code"
 msgstr "HS Code"
 
 msgid ""
@@ -1053,3 +1059,9 @@ msgstr ""
 
 msgid "shipment_options_delivery_standard"
 msgstr "Standaard bezorging"
+
+msgid "hs_code_variations"
+msgstr "Deze HS-code overschrijft de HS-code"
+
+msgid "all_delivery_days"
+msgstr "Alle bezorgdagen"

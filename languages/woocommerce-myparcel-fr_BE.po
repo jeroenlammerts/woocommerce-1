@@ -203,7 +203,7 @@ msgid "Diagnostic tools"
 msgstr "Outils de diagnostic"
 
 msgid "Digital stamp"
-msgstr "Bezig met laden..."
+msgstr "Timbre numérique"
 
 msgid "Disabled"
 msgstr "désactivé"
@@ -276,6 +276,9 @@ msgstr ""
 "exemple proposer une réduction pour cette fonction ou décompter des frais "
 "supplémentaires pour cette option de livraison."
 
+msgid "error_order_has_invalid_shipment_country"
+msgstr "L'ordre %s á un pays d'expédition invalide."
+
 msgid "error_api_for_order_%s_no_shipments_created"
 msgstr "MyParcel API erreur au commande %s, aucun envoi n'a été créé."
 
@@ -324,7 +327,7 @@ msgstr "Numéro de rue"
 msgid "How to update your PHP version"
 msgstr "Comment mettre à jour votre version PHP"
 
-msgid "HS Code"
+msgid "hs_code"
 msgstr "HS Code"
 
 msgid ""
@@ -1065,3 +1068,12 @@ msgstr ""
 
 msgid "shipment_options_delivery_standard"
 msgstr "Livraison Standard"
+
+msgid "hs_code_variations"
+msgstr "Ce code SH remplace le code SH"
+
+msgid "all_delivery_days"
+msgstr "Tous les jours de livraison"
+
+msgid "setting_modus_help_text"
+msgstr ""

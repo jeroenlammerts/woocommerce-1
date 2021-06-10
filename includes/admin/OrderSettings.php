@@ -136,47 +136,6 @@ class OrderSettings
         $this->setAllData();
     }
 
-    public function setShippingRecipient(): self
-    {
-        $thisOrder               = $this->order;
-        $this->shippingRecipient = (new Recipient())
-            ->setCc($thisOrder->get_shipping_country())
-            ->setCity($thisOrder->get_shipping_city())
-            ->setCompany($thisOrder->get_shipping_company())
-            //->setEmail($thisOrder->get_)
-            ->setPerson(substr($thisOrder->get_formatted_shipping_full_name(), 0, 50))
-            //->setPhone($thisOrder->get_shipping)
-            ->setPostalCode($thisOrder->get_shipping_postcode())
-            ->setStreet(substr($thisOrder->get_shipping_address_1(), 0, 40));
-
-        return $this;
-    }
-    public function getShippingRecipient(): ?Recipient
-    {
-        return $this->shippingRecipient;
-    }
-
-    public function setBillingRecipient(): self
-    {
-        $thisOrder              = $this->order;
-        $this->billingRecipient = (new Recipient())
-            ->setCc($thisOrder->get_billing_country())
-            ->setCity($thisOrder->get_billing_city())
-            ->setCompany($thisOrder->get_billing_company())
-            ->setEmail($thisOrder->get_billing_email())
-            ->setPerson(substr($thisOrder->get_formatted_billing_full_name(), 0, 50))
-            ->setPhone($thisOrder->get_billing_phone())
-            ->setPostalCode($thisOrder->get_billing_postcode())
-            ->setStreet(substr($thisOrder->get_billing_address_1(), 0, 40));
-
-        return $this;
-    }
-    public function getBillingRecipient(): ?Recipient
-    {
-        return $this->shippingRecipient;
-    }
-
-
     /**
      * @param bool $inGrams
      *
@@ -298,6 +257,70 @@ class OrderSettings
 
         $this->setWeight();
         $this->setDigitalStampRangeWeight();
+    }
+
+    // TODO refactor this (MY-28781)
+    public function setShippingRecipient(): self
+    {
+        $thisOrder  = $this->order;
+        $streetName = $this->stringConcatForAddressLine(
+            40,
+            $thisOrder->get_shipping_address_1(),
+            $thisOrder->get_shipping_address_2()
+        );
+
+        $this->shippingRecipient = (new Recipient())
+            ->setCc($thisOrder->get_shipping_country())
+            ->setCity($thisOrder->get_shipping_city())
+            ->setCompany($thisOrder->get_shipping_company())
+            ->setPerson(substr($thisOrder->get_formatted_shipping_full_name(), 0, 50))
+            ->setPostalCode($thisOrder->get_shipping_postcode())
+            ->setStreet($streetName);
+
+        return $this;
+    }
+
+    public function getShippingRecipient(): ?Recipient
+    {
+        return $this->shippingRecipient;
+    }
+
+    public function setBillingRecipient(): self
+    {
+        $thisOrder  = $this->order;
+        $streetName = $this->stringConcatForAddressLine(
+            40,
+            $thisOrder->get_billing_address_1(),
+            $thisOrder->get_billing_address_2()
+        );
+
+        $this->billingRecipient = (new Recipient())
+            ->setCc($thisOrder->get_billing_country())
+            ->setCity($thisOrder->get_billing_city())
+            ->setCompany($thisOrder->get_billing_company())
+            ->setEmail($thisOrder->get_billing_email())
+            ->setPerson(substr($thisOrder->get_formatted_billing_full_name(), 0, 50))
+            ->setPhone($thisOrder->get_billing_phone())
+            ->setPostalCode($thisOrder->get_billing_postcode())
+            ->setStreet($streetName);
+
+        return $this;
+    }
+
+    public function getBillingRecipient(): ?Recipient
+    {
+        return $this->shippingRecipient;
+    }
+
+    /**
+     * @param int    $maxLengthReturned
+     * @param string ...$parts
+     *
+     * @return string
+     */
+    private function stringConcatForAddressLine(int $maxLengthReturned = 255, string ...$parts): string
+    {
+        return substr(trim(implode(' ', $parts)), 0, $maxLengthReturned) ?: '';
     }
 
     /**

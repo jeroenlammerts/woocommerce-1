@@ -8,6 +8,7 @@ use MyParcelNL\Sdk\src\Collection\Fulfilment\OrderCollection;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 use MyParcelNL\Sdk\src\Model\Consignment\PostNLConsignment;
 use MyParcelNL\Sdk\src\Model\Fulfilment\Order;
+use MyParcelNL\WooCommerce\Includes\Adapter\OrderLineFromWooCommerce;
 use MyParcelNL\Sdk\src\Support\Arr;
 use MyParcelNL\Sdk\src\Support\Collection;
 use MyParcelNL\Sdk\src\Support\Str;
@@ -1426,26 +1427,20 @@ class WCMP_Export
     {
         foreach ($order_ids as $key => $order_id) {
             $order            = WCX::get_order($order_id);
-            $shipping_country = WCX_Order::get_prop($order, "shipping_country");
+            $shipping_country = WCX_Order::get_prop($order, 'shipping_country');
 
             if (! WCMP_Country_Codes::isAllowedDestination($shipping_country)) {
                 unset($order_ids[$key]);
+                $this->errors[] =
+                    sprintf(__('error_order_has_invalid_shipment_country', 'woocommerce-myparcel'), $key);
             }
-        }
-
-        if (empty($order_ids)) {
-            $this->errors[] =
-                __(
-                    "The order(s) you have selected have invalid shipping countries.",
-                    "woocommerce-myparcel"
-                );
         }
 
         return $order_ids;
     }
 
     /**
-     * @param int               $colloAmount
+     * @param int                 $colloAmount
      * @param MyParcelCollection  $collection
      * @param AbstractConsignment $consignment
      *
@@ -1589,13 +1584,11 @@ class WCMP_Export
     {
         $exportMode = WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_EXPORT_MODE);
         $orderIds   = $this->filterOrderDestinations($orderIds);
+        $print      = $print ?? 'no';
 
         switch ($exportMode) {
             case WCMP_Settings_Data::EXPORT_MODE_PPS:
-                // TODO make pps export using sdk
                 $this->saveOrderCollection($orderIds);
-                $process = ('yes' === $print);
-                $return  = $this->addShipments($orderIds, $process);
                 break;
 
             default:
@@ -1620,7 +1613,7 @@ class WCMP_Export
         $orderCollection = (new OrderCollection())->setApiKey($apiKey);
         $locale          = get_option('WPLANG', 'nl_NL');
 
-        foreach ($orderIds as $index => $orderId) {
+        foreach ($orderIds as $orderId) {
             $wcOrder         = WCX::get_order($orderId);
             $orderSettings   = new OrderSettings($wcOrder);
             $deliveryOptions = $orderSettings->getDeliveryOptions();
@@ -1628,29 +1621,29 @@ class WCMP_Export
             $order = (new Order())
                 ->setStatus($wcOrder->get_status())
                 ->setDeliveryOptions($deliveryOptions)
-                //->setExternalIdentifier($faker->uuid)
-                //->setFulfilmentPartnerIdentifier($faker->uuid)
                 ->setInvoiceAddress($orderSettings->getBillingRecipient())
                 ->setRecipient($orderSettings->getShippingRecipient())
                 ->setLanguage($locale)
                 ->setType(null) // what do we want here?
-                ->setOrderDate($wcOrder->get_date_created()); // Y-M-d H:i:s
+                ->setOrderDate($wcOrder->get_date_created());
+                //->setExternalIdentifier($uuid)
+                //->setFulfilmentPartnerIdentifier($uuid)
 
             $orderLines = new Collection();
 
             foreach ($wcOrder->get_items() as $wcOrderItem) {
-                $orderLine = new WCMP_SdkOrderItemFromWcOrderLine(null, $wcOrderItem);
+                $orderLine = new OrderLineFromWooCommerce($wcOrderItem);
 
-                $orderLines->push($orderLine->getOrderLine());
+                $orderLines->push($orderLine);
             }
 
             $order->setOrderLines($orderLines);
             $orderCollection->push($order);
         }
-        var_dump($orderCollection);
-        die();
 
         $savedOrderCollection = $orderCollection->save();
+        var_dump($savedOrderCollection);
+        die();
     }
 
 
