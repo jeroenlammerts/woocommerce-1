@@ -15,10 +15,13 @@ msgid "setting_modus_title"
 msgstr "Modus"
 
 msgid "setting_modus_traditional_title"
-msgstr "Traditioneel"
+msgstr "Exporteer alleen verzendinformatie"
 
 msgid "setting_modus_pps_title"
-msgstr "Orders/pakbon"
+msgstr "Exporteer volledige order"
+
+msgid "setting_modus_help_text"
+msgstr ""
 
 msgid "(Unknown)"
 msgstr "(Onbekend)"
@@ -44,9 +47,7 @@ msgstr ""
 msgid "Address details are not entered"
 msgstr "Adresgegevens zijn niet ingevuld"
 
-msgid ""
-"Amount of days a customer can postpone a shipment. Default is 0 days with a "
-"maximum value of 14 days."
+msgid "setting_carrier_delivery_days_window_help_text"
 msgstr "Aantal dagen dat een klant de bezorging kan uitstellen"
 
 msgid "api key"
@@ -183,7 +184,7 @@ msgstr "afgeleverd - klaar om opgehaald te worden"
 msgid "Delivery date"
 msgstr "Bezorgdatum"
 
-msgid "Delivery days window"
+msgid "setting_carrier_delivery_days_window_title"
 msgstr "Leverdagen venster"
 
 msgid "Delivery information:"
@@ -448,7 +449,7 @@ msgstr "Land ontbreekt"
 msgid "Missing number"
 msgstr "Nummer ontbreekt"
 
-msgid "Monday delivery"
+msgid "shipment_options_delivery_monday"
 msgstr "Maandag levering"
 
 msgid "MyParcel"
@@ -463,13 +464,13 @@ msgstr "MyParcel zending:"
 msgid "myparcel_shipment_created"
 msgstr "MyParcel zending aangemaakt"
 
-msgid "MyParcel: Export"
+msgid "myparcel_bulk_action_export"
 msgstr "MyParcel: Exporteren"
 
-msgid "MyParcel: Export & Print"
+msgid "myparcel_bulk_action_export_print"
 msgstr "MyParcel: Exporteren & Printen"
 
-msgid "MyParcel: Print"
+msgid "myparcel_bulk_action_print"
 msgstr "MyParcel: Printen"
 
 msgid "No API key found in MyParcel settings"
@@ -1062,3 +1063,6 @@ msgstr "Deze HS-code overschrijft de HS-code"
 
 msgid "all_delivery_days"
 msgstr "Alle bezorgdagen"
+
+msgid "tomorrow "
+msgstr "Morgen "

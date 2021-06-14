@@ -162,6 +162,11 @@ class WCMYPA_Admin
                 foreach (range(1, $deliveryDayWindow) as $number) {
                     $date    = date('Y-m-d', strtotime('now' . '+' . $number . 'days'));
                     $dayDate = wc_format_datetime(new WC_DateTime($date), 'D d-m');
+
+                    if ($number === 1) {
+                        $dayDate = __('tomorrow ', 'woocommerce-myparcel') . $dayDate;
+                    }
+
                     printf(
                         '<option value="%s" ' . selected($date, $selected) . ' >%s</option>',
                         $date,

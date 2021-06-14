@@ -44,12 +44,8 @@ msgstr ""
 msgid "Address details are not entered"
 msgstr "Les données relatives à l'adresse ne sont pas complétées"
 
-msgid ""
-"Amount of days a customer can postpone a shipment. Default is 0 days with a "
-"maximum value of 14 days."
-msgstr ""
-"Nombre de jours un client peut reporter une expédition. Par défaut est 0 "
-"jour avec une valeur maximale de 14 jours."
+msgid "setting_carrier_delivery_days_window_help_text"
+msgstr "Nombre de jours un client peut reporter une expédition."
 
 msgid "api key"
 msgstr "API key"
@@ -187,7 +183,7 @@ msgstr "livré - prêt à être collecté"
 msgid "Delivery date"
 msgstr "Date de livraison"
 
-msgid "Delivery days window"
+msgid "setting_carrier_delivery_days_window_title"
 msgstr "Fenêtre jours de livraison"
 
 msgid "Delivery information:"
@@ -453,7 +449,7 @@ msgstr "Pays manque"
 msgid "Missing number"
 msgstr "Numéro manque"
 
-msgid "Monday delivery"
+msgid "shipment_options_delivery_monday"
 msgstr "Livraison lundi"
 
 msgid "MyParcel"
@@ -468,13 +464,13 @@ msgstr "Envoi MyParcel:"
 msgid "myparcel_shipment_created"
 msgstr "Envoi MyParcel créé :"
 
-msgid "MyParcel: Export"
+msgid "myparcel_bulk_action_export"
 msgstr "MyParcel: Exporter"
 
-msgid "MyParcel: Export & Print"
+msgid "myparcel_bulk_action_export_print"
 msgstr "MyParcel: Exporter & Imprimer"
 
-msgid "MyParcel: Print"
+msgid "myparcel_bulk_action_print"
 msgstr "MyParcel: Imprimer"
 
 msgid "No API key found in MyParcel settings"
@@ -878,7 +874,7 @@ msgid ""
 "requiring a signature on delivery."
 msgstr ""
 "Les options de livraison MyParcel permettent à vos clients de choisir s’ils "
-"souhaitent que leur colis soit livré à domicile ou �� un point de retrait. "
+"souhaitent que leur colis soit livré à domicile ou à un point de retrait. "
 "En fonction des paramètres, vous pouvez leur permettre de sélectionner une "
 "date, une heure et même des options telles que la signature d'une signature."
 
@@ -1074,3 +1070,9 @@ msgstr "Ce code SH remplace le code SH"
 
 msgid "all_delivery_days"
 msgstr "Tous les jours de livraison"
+
+msgid "tomorrow "
+msgstr "Demain "
+
+msgid "setting_modus_help_text"
+msgstr ""
