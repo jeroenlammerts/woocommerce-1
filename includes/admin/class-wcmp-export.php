@@ -7,6 +7,7 @@ use MyParcelNL\Sdk\src\Helper\MyParcelCollection;
 use MyParcelNL\Sdk\src\Collection\Fulfilment\OrderCollection;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 use MyParcelNL\Sdk\src\Model\Consignment\PostNLConsignment;
+use MyParcelNL\Sdk\src\Model\Fulfilment\AbstractOrder;
 use MyParcelNL\Sdk\src\Model\Fulfilment\Order;
 use MyParcelNL\WooCommerce\Includes\Adapter\OrderLineFromWooCommerce;
 use MyParcelNL\Sdk\src\Support\Arr;
@@ -259,7 +260,7 @@ class WCMP_Export
                 switch ($request) {
                     // Creating consignments.
                     case self::EXPORT_ORDER:
-                        $this->exportAccordingToMode($order_ids, $offset, $print);
+                        $return = $this->exportAccordingToMode($order_ids, $offset, $print);
                         break;
 
                     // Creating a return shipment.
@@ -401,8 +402,7 @@ class WCMP_Export
                 $this->getShipmentData($consignmentIds, $order);
             }
 
-            $api = $this->init_api();
-            $api->updateOrderStatus($order, WCMP_Settings_Data::CHANGE_STATUS_AFTER_EXPORT);
+            WCMP_API::updateOrderStatus($order, WCMP_Settings_Data::CHANGE_STATUS_AFTER_EXPORT);
 
             WCX_Order::update_meta_data(
                 $order,
@@ -1575,12 +1575,12 @@ class WCMP_Export
      * @param int           $offset
      * @param string | null $print
      *
-     * @return array|void
+     * @return array
      * @throws ApiException
      * @throws MissingFieldException
      * @throws Exception
      */
-    private function exportAccordingToMode(array $orderIds, int $offset, ?string $print)
+    private function exportAccordingToMode(array $orderIds, int $offset, ?string $print): array
     {
         $exportMode = WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_EXPORT_MODE);
         $orderIds   = $this->filterOrderDestinations($orderIds);
@@ -1588,7 +1588,7 @@ class WCMP_Export
 
         switch ($exportMode) {
             case WCMP_Settings_Data::EXPORT_MODE_PPS:
-                $this->saveOrderCollection($orderIds);
+                $return = $this->saveOrderCollection($orderIds);
                 break;
 
             default:
@@ -1599,15 +1599,17 @@ class WCMP_Export
 
         }
 
-        $this->setFeedbackForClient($print, $offset, $orderIds, $return);
-
-        return $return;
+        return $this->setFeedbackForClient($print, $offset, $orderIds, $return ?? []);
     }
 
     /**
+     * @param array $orderIds
+     *
+     * @return array
+     *
      * @throws \Exception
      */
-    private function saveOrderCollection(array $orderIds): void
+    private function saveOrderCollection(array $orderIds): array
     {
         $apiKey          = $this->getSetting(WCMYPA_Settings::SETTING_API_KEY);
         $orderCollection = (new OrderCollection())->setApiKey($apiKey);
@@ -1625,8 +1627,8 @@ class WCMP_Export
                 ->setRecipient($orderSettings->getShippingRecipient())
                 ->setLanguage($locale)
                 ->setType(null) // what do we want here?
-                ->setOrderDate($wcOrder->get_date_created());
-                //->setExternalIdentifier($uuid)
+                ->setOrderDate($wcOrder->get_date_created())
+                ->setExternalIdentifier($orderId);
                 //->setFulfilmentPartnerIdentifier($uuid)
 
             $orderLines = new Collection();
@@ -1641,19 +1643,52 @@ class WCMP_Export
             $orderCollection->push($order);
         }
 
-        $savedOrderCollection = $orderCollection->save();
-        var_dump($savedOrderCollection);
-        die();
+        return $this->updateOrderMetaByCollection($orderCollection->save());
     }
 
+    /**
+     * @param \MyParcelNL\Sdk\src\Collection\Fulfilment\OrderCollection $orderCollection
+     *
+     * @return array
+     */
+    private function updateOrderMetaByCollection(OrderCollection $orderCollection): array
+    {
+        $currentDateTime = (new DateTime())->format(AbstractOrder::DATE_FORMAT_FULL);
+
+        foreach ($orderCollection->getIterator() as $order) {
+            $orderId = $order->getExternalIdentifier();
+            $wcOrder = WCX::get_order($orderId);
+            $value   = [
+                WCMYPA_Admin::META_PPS_EXPORTED    => true,
+                WCMYPA_Admin::META_PPS_UUID        => $order->getUuid(),
+                WCMYPA_Admin::META_PPS_EXPORT_DATE => $currentDateTime,
+            ];
+
+            //$wcOrder->update_meta_data(WCMYPA_Admin::META_PPS, $value);
+            if (! add_post_meta($orderId, WCMYPA_Admin::META_PPS, $value)) {
+                $this->errors[] = sprintf(__('error_pps_export_feedback', 'woocommerce-myparcel'), $orderId);
+            }
+// TODO refactor updateOrderStatus to use the correct AFTER_EXPORT not the (arbitrary) default or something else
+            WCMP_API::updateOrderStatus($wcOrder, WCMP_Settings_Data::CHANGE_STATUS_AFTER_PRINTING);
+        }
+
+        return [
+            'success' => sprintf(
+                __('myparcel_orders_now_in_backoffice', 'woocommerce-myparcel'),
+                count($orderCollection)
+            ),
+        ];
+    }
 
     /**
      * @param string $print
      * @param int    $offset
      * @param array  $orderIds
      * @param array  $return
+     *
+     * @return array
      */
-    private function setFeedbackForClient (string $print, int $offset, array $orderIds, array $return): void
+    private function setFeedbackForClient (string $print, int $offset, array $orderIds, array $return): array
     {
         // When adding shipments, store $return for use in admin_notice
         // This way we can refresh the page (JS) to show all new buttons
@@ -1668,6 +1703,8 @@ class WCMP_Export
                 update_option('wcmyparcel_print_queue', $print_queue);
             }
         }
+
+        return $return;
     }
 
     /**

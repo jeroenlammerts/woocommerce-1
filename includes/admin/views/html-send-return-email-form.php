@@ -152,7 +152,7 @@ $target_url = wp_nonce_url(
         <div>
             <?php
             if (isset($dialog) && $dialog === 'shipment') {
-                $button_text = __("Export to MyParcel", "woocommerce-myparcel");
+                $button_text = __('action_export_to_myparcel', 'woocommerce-myparcel');
             } else {
                 $button_text = __("Send email", "woocommerce-myparcel");
             }

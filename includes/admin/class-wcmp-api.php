@@ -18,7 +18,7 @@ class WCMP_API extends WCMP_Rest
     /**
      * @var string
      */
-    public $apiUrl = "https://api.myparcel.nl/";
+    public $apiUrl = WCMP_Data::API_URL;
 
     /**
      * @var string
@@ -181,18 +181,18 @@ class WCMP_API extends WCMP_Rest
      * Update the status of given order based on the automatic order status settings.
      *
      * @param WC_Order $order
-     * @param string   $changeStatusAtExportOrPrint
+     * @param string   $thisMoment
      */
-    public function updateOrderStatus(WC_Order $order, string $changeStatusAtExportOrPrint): void
+    public static function updateOrderStatus(WC_Order $order, string $thisMoment): void
     {
         $statusAutomation     = WCMYPA()->setting_collection->isEnabled(WCMYPA_Settings::SETTING_ORDER_STATUS_AUTOMATION);
         $momentOfStatusChange = WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_CHANGE_ORDER_STATUS_AFTER);
         $newStatus            = WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_AUTOMATIC_ORDER_STATUS);
 
-        if ($statusAutomation && $changeStatusAtExportOrPrint === $momentOfStatusChange) {
+        if ($statusAutomation && $thisMoment === $momentOfStatusChange) {
             $order->update_status(
                 $newStatus,
-                __("myparcel_shipment_created", "woocommerce-myparcel")
+                __('myparcel_export', 'woocommerce-myparcel')
             );
 
             WCMP_Log::add("Status of order {$order->get_id()} updated to \"$newStatus\"");
@@ -216,9 +216,9 @@ class WCMP_API extends WCMP_Rest
             }
 
             $shipmentData = (new WCMP_Export())->getShipmentData($lastShipmentIds, $order);
-            $trackTrace   = $shipmentData["track_trace"] ?? null;
+            $trackTrace   = $shipmentData['track_trace'] ?? null;
 
-            $this->updateOrderStatus($order, WCMP_Settings_Data::CHANGE_STATUS_AFTER_PRINTING);
+            self::updateOrderStatus($order, WCMP_Settings_Data::CHANGE_STATUS_AFTER_PRINTING);
 
             ChannelEngine::updateMetaOnExport($order, $trackTrace);
         }

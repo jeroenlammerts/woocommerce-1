@@ -3,6 +3,7 @@
 use MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractDeliveryOptionsAdapter as DeliveryOptions;
 use MyParcelNL\Sdk\src\Factory\DeliveryOptionsAdapterFactory;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
+use MyParcelNL\Sdk\src\Support\Arr;
 use WPO\WC\MyParcel\Compatibility\Order as WCX_Order;
 use WPO\WC\MyParcel\Compatibility\Product as WCX_Product;
 use WPO\WC\MyParcel\Compatibility\WC_Core as WCX;
@@ -36,6 +37,16 @@ class WCMYPA_Admin
     public const META_HS_CODE_VARIATION      = "_myparcel_hs_code_variation";
     public const META_COUNTRY_OF_ORIGIN      = "_myparcel_country_of_origin";
     public const META_AGE_CHECK              = "_myparcel_age_check";
+    public const META_PPS                    = '_myparcel_pps';
+
+    public const META_PPS_EXPORTED           = 'pps_exported';
+    public const META_PPS_EXPORT_DATE        = 'pps_export_date';
+    public const META_PPS_UUID               = 'pps_uuid';
+
+    public const BULK_ACTION_EXPORT       = "wcmp_export";
+    public const BULK_ACTION_PRINT        = "wcmp_print";
+    public const BULK_ACTION_EXPORT_PRINT = "wcmp_export_print";
+
 
     /**
      * @deprecated use weight property in META_SHIPMENT_OPTIONS_EXTRA.
@@ -55,10 +66,6 @@ class WCMYPA_Admin
     public const ORDER_STATUS_PRINTED_DIGITAL_STAMP       = 14;
 
     public const SHIPMENT_OPTIONS_FORM_NAME = "myparcel_options";
-
-    public const BULK_ACTION_EXPORT       = "wcmp_export";
-    public const BULK_ACTION_PRINT        = "wcmp_print";
-    public const BULK_ACTION_EXPORT_PRINT = "wcmp_export_print";
 
     public const PRODUCT_OPTIONS_ENABLED  = "yes";
     public const PRODUCT_OPTIONS_DISABLED = "no";
@@ -315,7 +322,7 @@ class WCMYPA_Admin
 
         return (WCMP_Settings_Data::EXPORT_MODE_PPS === $exportMode)
             ? [
-                self::BULK_ACTION_EXPORT => __('myparcel_bulk_action_export', 'woocommerce-myparcel'),
+                self::BULK_ACTION_EXPORT       => __('myparcel_bulk_action_export', 'woocommerce-myparcel'),
             ]
             : [
                 self::BULK_ACTION_EXPORT       => __('myparcel_bulk_action_export', 'woocommerce-myparcel'),
@@ -474,67 +481,76 @@ class WCMYPA_Admin
             return;
         }
 
-        $shipping_country = WCX_Order::get_prop($order, 'shipping_country');
+        $shippingCountry = WCX_Order::get_prop($order, 'shipping_country');
 
-        if (! WCMP_Country_Codes::isAllowedDestination($shipping_country)) {
+        if (! WCMP_Country_Codes::isAllowedDestination($shippingCountry)) {
             return;
         }
 
-        $order_id   = WCX_Order::get_id($order);
+        $orderId    = WCX_Order::get_id($order);
         $exportMode = WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_EXPORT_MODE);
+        $display    = 'display' === WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_DOWNLOAD_DISPLAY);
+        $attributes = [];
+        $pluginUrl  = WCMYPA()->plugin_url();
 
-        $baseUrl      = "admin-ajax.php?action=" . WCMP_Export::EXPORT;
+        if ($display) {
+            $attributes['target'] = '_blank';
+        }
+
+        $baseUrl      = 'admin-ajax.php?action=' . WCMP_Export::EXPORT;
         $addShipments = WCMP_Export::EXPORT_ORDER;
         $getLabels    = WCMP_Export::GET_LABELS;
         $addReturn    = WCMP_Export::EXPORT_RETURN;
 
-        //$returnShipmentId = $order->get_meta(self::META_RETURN_SHIPMENT_IDS);
-
-        $listing_actions = [
+        $listingActions = [
             $addShipments => [
-                "url" => admin_url("$baseUrl&request=$addShipments&order_ids=$order_id"),
-                "img" => WCMYPA()->plugin_url() . "/assets/img/export.svg",
-                "alt" => __("Export to MyParcel", "woocommerce-myparcel"),
+                'url' => admin_url("$baseUrl&request=$addShipments&order_ids=$orderId"),
+                'img' => "{$pluginUrl}/assets/img/export.svg",
+                'alt' => __('action_export_to_myparcel', 'woocommerce-myparcel'),
             ],
             $getLabels    => [
-                "url" => admin_url("$baseUrl&request=$getLabels&order_ids=$order_id"),
-                "img" => WCMYPA()->plugin_url() . "/assets/img/print.svg",
-                "alt" => __("Print MyParcel label", "woocommerce-myparcel"),
+                'url' => admin_url("$baseUrl&request=$getLabels&order_ids=$orderId"),
+                'img' => "{$pluginUrl}/assets/img/print.svg",
+                'alt' => __('action_print_myparcel_label', 'woocommerce-myparcel'),
             ],
             $addReturn    => [
-                "url" => admin_url("$baseUrl&request=$addReturn&order_ids=$order_id"),
-                "img" => WCMYPA()->plugin_url() . "/assets/img/return.svg",
-                "alt" => __("Email return label", "woocommerce-myparcel"),
+                'url' => admin_url("$baseUrl&request=$addReturn&order_ids=$orderId"),
+                'img' => "{$pluginUrl}/assets/img/return.svg",
+                'alt' => __('action_email_return_label', 'woocommerce-myparcel'),
             ],
         ];
 
+        $metaPps = get_post_meta($orderId, self::META_PPS);
+
+        if (is_array($metaPps) && count($metaPps)) {
+            $listingActions[$addShipments]['img'] = "{$pluginUrl}/assets/img/myparcel.svg";
+            $attributes['data-pps']               = var_export($metaPps, true);
+
+            if ($metaPps[0][self::META_PPS_EXPORTED]) {
+                $listingActions[$addShipments]['alt'] = __('export_hint_already_in_myparcel', 'woocommerce-myparcel');
+            }
+        }
+
         if (WCMP_Settings_Data::EXPORT_MODE_PPS === $exportMode) {
-            unset($listing_actions[$getLabels]);
+            unset($listingActions[$getLabels]);
         }
 
         $consignments = self::get_order_shipments($order);
 
         if (empty($consignments)) {
-            unset($listing_actions[$getLabels]);
+            unset($listingActions[$getLabels]);
         }
 
         $processed_shipments = self::get_order_shipments($order);
-        if (empty($processed_shipments) || $shipping_country !== 'NL') {
-            unset($listing_actions[$addReturn]);
+        if (empty($processed_shipments) || 'NL' !== $shippingCountry) {
+            unset($listingActions[$addReturn]);
         }
 
-        $display    = WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_DOWNLOAD_DISPLAY) === 'display';
-        $attributes = [];
-
-        if ($display) {
-            $attributes["target"] = "_blank";
-        }
-
-        foreach ($listing_actions as $request => $data) {
+        foreach ($listingActions as $request => $data) {
             self::renderAction(
                 $data['url'],
                 $data['alt'],
-                $data["img"],
+                $data['img'],
                 $attributes
             );
         }

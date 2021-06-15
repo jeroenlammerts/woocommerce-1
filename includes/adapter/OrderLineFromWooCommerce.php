@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MyParcelNL\WooCommerce\Includes\Adapter;
 
 use MyParcelNL\Sdk\src\Model\Fulfilment\OrderLine;
-use MyParcelNL\Sdk\src\Model\Fulfilment\Product;
 use WC_Order_Item;
 
 class OrderLineFromWooCommerce extends OrderLine
