@@ -412,7 +412,7 @@ class WCMP_Checkout
             );
 
             /**
-             * Save meta deliverydate for filter in ordergrid
+             * Save delivery date in meta for use as order grid filter.
              */
             WCX_Order::update_meta_data(
                 $order,

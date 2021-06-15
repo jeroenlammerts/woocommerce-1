@@ -181,7 +181,7 @@ class WCMYPA_Admin
         global $typenow;
 
         if (in_array($typenow, wc_get_order_types('order-meta-boxes'))) {
-            if (isset($_GET['deliveryDate']) && !empty($_GET['deliveryDate'])) {
+            if (isset($_GET['deliveryDate']) && ! empty($_GET['deliveryDate'])) {
                 $deliveryDate['meta_query'] = [
                     [
                         'key'     => '_myparcel_delivery_date',
@@ -235,7 +235,7 @@ class WCMYPA_Admin
                 'value'         => get_post_meta($variation->ID, self::META_HS_CODE_VARIATION, true),
                 'label'         => __('hs_code', 'woocommerce-myparcel'),
                 'desc_tip'      => true,
-                'description'   => __('hs_code_variations.', 'woocommerce-myparcel'),
+                'description'   => __('hs_code_variations', 'woocommerce-myparcel'),
                 'wrapper_class' => 'form-row form-row-full',
             ]
         );
