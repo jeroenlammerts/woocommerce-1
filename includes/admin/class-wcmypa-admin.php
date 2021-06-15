@@ -100,9 +100,8 @@ class WCMYPA_Admin
         add_filter("manage_edit-shop_order_columns", [$this, "barcode_add_new_order_admin_list_column"], 10, 1);
         add_action("manage_shop_order_posts_custom_column", [$this, "addBarcodeToOrderColumn"], 10, 2);
 
-        // Add deliver day filter to order grid
-        add_action('restrict_manage_posts', [$this, 'restrictManagePosts'], 10, 1);
-        add_filter('request', [$this, 'requestQuery'], 10, 1);
+        add_action('restrict_manage_posts', [$this, 'addDeliveryDayFilterToOrdergrid'], 10, 1);
+        add_filter('request', [$this, 'getDeliveryDateFromOrder'], 10, 1);
 
         add_action('woocommerce_payment_complete', [$this, 'automaticExportOrder'], 1000);
         add_action('woocommerce_order_status_changed', [$this, 'automaticExportOrder'], 1000, 3);
@@ -121,22 +120,15 @@ class WCMYPA_Admin
     /**
      * @throws \Exception
      */
-    public function restrictManagePosts(): void
+    public function addDeliveryDayFilterToOrdergrid(): void
     {
         global $typenow;
 
-        if (in_array($typenow, wc_get_order_types('order-meta-boxes'))) {
-            $this->deliveryDayFilters();
-        }
-    }
 
-    /**
-     * @throws \Exception
-     */
-    public function deliveryDayFilters(): void
-    {
-        if (apply_filters('deliveryDayFilter', true)) {
-            $this->deliveryDayFilter();
+        if (in_array($typenow, wc_get_order_types('order-meta-boxes'))) {
+            if (apply_filters('deliveryDayFilter', true)) {
+                $this->deliveryDayFilter();
+            }
         }
     }
 
@@ -145,7 +137,7 @@ class WCMYPA_Admin
      */
     public function deliveryDayFilter(): void
     {
-        if (is_admin() && ! empty($_GET['post_type']) && $_GET['post_type'] == 'shop_order') {
+        if (is_admin() && ! empty($_GET['post_type']) == 'shop_order') {
             $selected = (isset($_GET['deliveryDate'])
                 ? sanitize_text_field($_GET['deliveryDate'])
                 : false);
@@ -160,17 +152,17 @@ class WCMYPA_Admin
                 );
 
                 foreach (range(1, $deliveryDayWindow) as $number) {
-                    $date    = date('Y-m-d', strtotime('now' . '+' . $number . 'days'));
-                    $dayDate = wc_format_datetime(new WC_DateTime($date), 'D d-m');
+                    $date    = date('Y-m-d', strtotime($number . 'days'));
+                    $dateString = wc_format_datetime(new WC_DateTime($date), 'D d-m');
 
-                    if ($number === 1) {
-                        $dayDate = __('tomorrow ', 'woocommerce-myparcel') . $dayDate;
+                    if (1 == $number) {
+                        $dateString = __('tomorrow ', 'woocommerce-myparcel') . $dateString;
                     }
 
                     printf(
                         '<option value="%s" ' . selected($date, $selected) . ' >%s</option>',
                         $date,
-                        $dayDate
+                        $dateString
                     );
                 }
                 ?>
@@ -180,17 +172,17 @@ class WCMYPA_Admin
     }
 
     /**
-     * @param $vars
+     * @param $deliveryDate
      *
      * @return array
      */
-    public function requestQuery($vars): array
+    public function getDeliveryDateFromOrder($deliveryDate): array
     {
         global $typenow;
 
         if (in_array($typenow, wc_get_order_types('order-meta-boxes'))) {
             if (isset($_GET['deliveryDate']) && !empty($_GET['deliveryDate'])) {
-                $vars['meta_query'] = [
+                $deliveryDate['meta_query'] = [
                     [
                         'key'     => '_myparcel_delivery_date',
                         'value'   => sanitize_text_field($_GET['deliveryDate']),
@@ -200,7 +192,7 @@ class WCMYPA_Admin
             }
         }
 
-        return $vars;
+        return $deliveryDate;
     }
 
     /**
