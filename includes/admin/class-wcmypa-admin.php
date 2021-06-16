@@ -152,16 +152,17 @@ class WCMYPA_Admin
                 );
 
                 foreach (range(1, $deliveryDayWindow) as $number) {
-                    $date    = date('Y-m-d', strtotime($number . 'days'));
+                    $date       = date('Y-m-d', strtotime($number . 'days'));
                     $dateString = wc_format_datetime(new WC_DateTime($date), 'D d-m');
 
-                    if (1 == $number) {
-                        $dateString = __('tomorrow ', 'woocommerce-myparcel') . $dateString;
+                    if (1 === $number) {
+                        $dateString = __('tomorrow', 'woocommerce-myparcel') .' '. $dateString;
                     }
 
                     printf(
-                        '<option value="%s" ' . selected($date, $selected) . ' >%s</option>',
+                        '<option value="%s""%s">%s</option>',
                         $date,
+                        selected($date, $selected),
                         $dateString
                     );
                 }
@@ -172,24 +173,24 @@ class WCMYPA_Admin
     }
 
     /**
-     * @param $deliveryDate
+     * @param array $deliveryDate
      *
      * @return array
      */
-    public function getDeliveryDateFromOrder($deliveryDate): array
+    public function getDeliveryDateFromOrder(array $deliveryDate): array
     {
         global $typenow;
 
-        if (in_array($typenow, wc_get_order_types('order-meta-boxes'))) {
-            if (isset($_GET['deliveryDate']) && ! empty($_GET['deliveryDate'])) {
-                $deliveryDate['meta_query'] = [
-                    [
-                        'key'     => '_myparcel_delivery_date',
-                        'value'   => sanitize_text_field($_GET['deliveryDate']),
-                        'compare' => '=',
-                    ],
-                ];
-            }
+        if (in_array($typenow, wc_get_order_types('order-meta-boxes'))
+            && (isset($_GET['deliveryDate'])
+                && ! empty($_GET['deliveryDate']))) {
+            $deliveryDate['meta_query'] = [
+                [
+                    'key'     => '_myparcel_delivery_date',
+                    'value'   => sanitize_text_field($_GET['deliveryDate']),
+                    'compare' => '=',
+                ],
+            ];
         }
 
         return $deliveryDate;

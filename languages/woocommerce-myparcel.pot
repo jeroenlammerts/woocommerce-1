@@ -255,127 +255,127 @@ msgstr ""
 msgid "The order(s) you have selected have invalid shipping countries."
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:155
+#: includes/admin/class-wcmypa-admin.php:147
 msgid "all_delivery_days"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:167
-msgid "tomorrow "
+#: includes/admin/class-wcmypa-admin.php:159
+msgid "tomorrow"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:219
+#: includes/admin/class-wcmypa-admin.php:211
 msgid "Pickup location"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:244
+#: includes/admin/class-wcmypa-admin.php:236
 msgid "hs_code"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:246
-msgid "hs_code_variations."
+#: includes/admin/class-wcmypa-admin.php:238
+msgid "hs_code_variations"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:414, includes/admin/class-wcmypa-admin.php:438
+#: includes/admin/class-wcmypa-admin.php:406, includes/admin/class-wcmypa-admin.php:430
 msgid "MyParcel: Export"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:415, includes/admin/class-wcmypa-admin.php:439
+#: includes/admin/class-wcmypa-admin.php:407, includes/admin/class-wcmypa-admin.php:431
 msgid "MyParcel: Print"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:416, includes/admin/class-wcmypa-admin.php:440
+#: includes/admin/class-wcmypa-admin.php:408, includes/admin/class-wcmypa-admin.php:432
 msgid "MyParcel: Export & Print"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:497
+#: includes/admin/class-wcmypa-admin.php:489
 msgid "Labels to skip"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:513
+#: includes/admin/class-wcmypa-admin.php:505
 msgid "Print"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:577, includes/admin/views/html-send-return-email-form.php:155
+#: includes/admin/class-wcmypa-admin.php:569, includes/admin/views/html-send-return-email-form.php:155
 msgid "Export to MyParcel"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:582, includes/admin/views/html-order-track-trace-table.php:66
+#: includes/admin/class-wcmypa-admin.php:574, includes/admin/views/html-order-track-trace-table.php:66
 msgid "Print MyParcel label"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:587
+#: includes/admin/class-wcmypa-admin.php:579
 msgid "Email return label"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:711, includes/admin/settings/class-wcmypa-settings.php:163, includes/admin/settings/class-wcmypa-settings.php:164
+#: includes/admin/class-wcmypa-admin.php:703, includes/admin/settings/class-wcmypa-settings.php:163, includes/admin/settings/class-wcmypa-settings.php:164
 msgid "MyParcel"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:904
+#: includes/admin/class-wcmypa-admin.php:896
 msgid "HS Code"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:908
+#: includes/admin/class-wcmypa-admin.php:900
 msgid "HS Codes are used for MyParcel world shipments, you can find the appropriate code on the %ssite of the Dutch Customs%s"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:919
+#: includes/admin/class-wcmypa-admin.php:911
 msgid "product_options_country_of_origin"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:923, includes/admin/class-wcmypa-admin.php:936
+#: includes/admin/class-wcmypa-admin.php:915, includes/admin/class-wcmypa-admin.php:928
 msgid "Default"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:928, includes/admin/settings/class-wcmp-settings-data.php:726
+#: includes/admin/class-wcmypa-admin.php:920, includes/admin/settings/class-wcmp-settings-data.php:726
 msgid "setting_country_of_origin_help_text"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:933, includes/admin/OrderSettingsRows.php:241, includes/admin/settings/class-wcmp-settings-data.php:453
+#: includes/admin/class-wcmypa-admin.php:925, includes/admin/OrderSettingsRows.php:241, includes/admin/settings/class-wcmp-settings-data.php:453
 msgid "shipment_options_age_check"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:937, includes/entities/settings-field-arguments.php:170
+#: includes/admin/class-wcmypa-admin.php:929, includes/entities/settings-field-arguments.php:170
 msgid "Disabled"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:938, includes/entities/settings-field-arguments.php:169
+#: includes/admin/class-wcmypa-admin.php:930, includes/entities/settings-field-arguments.php:169
 msgid "Enabled"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:940, includes/admin/OrderSettingsRows.php:242, includes/admin/settings/class-wcmp-settings-data.php:455
+#: includes/admin/class-wcmypa-admin.php:932, includes/admin/OrderSettingsRows.php:242, includes/admin/settings/class-wcmp-settings-data.php:455
 msgid "shipment_options_age_check_help_text"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:983
+#: includes/admin/class-wcmypa-admin.php:975
 msgid "No label has been created yet."
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:994
+#: includes/admin/class-wcmypa-admin.php:986
 msgid "The label has been printed."
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:999
+#: includes/admin/class-wcmypa-admin.php:991
 msgid "Concept created but not printed."
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:1083
+#: includes/admin/class-wcmypa-admin.php:1075
 msgid "MyParcel shipment:"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:1116, includes/admin/class-wcmypa-admin.php:1129
+#: includes/admin/class-wcmypa-admin.php:1108, includes/admin/class-wcmypa-admin.php:1121
 msgid "delivery_type"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:1117
+#: includes/admin/class-wcmypa-admin.php:1109
 msgid "pickup_location"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:1174, includes/admin/class-wcmypa-admin.php:1196
+#: includes/admin/class-wcmypa-admin.php:1166, includes/admin/class-wcmypa-admin.php:1188
 msgid "Delivery information:"
 msgstr ""
 
-#: includes/admin/class-wcmypa-admin.php:1302
+#: includes/admin/class-wcmypa-admin.php:1294
 msgid "(Unknown)"
 msgstr ""
 
