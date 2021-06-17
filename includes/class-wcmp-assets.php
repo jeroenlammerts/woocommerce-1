@@ -1,5 +1,7 @@
 <?php
 
+use MyParcelNL\Sdk\src\Model\MyParcelRequest;
+
 if (! defined("ABSPATH")) {
     exit;
 } // Exit if accessed directly
@@ -68,7 +70,7 @@ class WCMP_Assets
             "wcmp-admin",
             "wcmp",
             [
-                "api_url"                => WCMP_Data::API_URL,
+                "api_url"                => MyParcelRequest::REQUEST_URL,
                 "actions"                => [
                     "export"        => WCMP_Export::EXPORT,
                     "export_return" => WCMP_Export::EXPORT_RETURN,

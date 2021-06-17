@@ -523,11 +523,17 @@ class WCMYPA_Admin
         $metaPps = get_post_meta($orderId, self::META_PPS);
 
         if (is_array($metaPps) && count($metaPps)) {
-            $listingActions[$addShipments]['img'] = "{$pluginUrl}/assets/img/myparcel.svg";
-            $attributes['data-pps']               = var_export($metaPps, true);
+            $attributes['data-pps'] = var_export($metaPps, true);
 
-            if ($metaPps[0][self::META_PPS_EXPORTED]) {
-                $listingActions[$addShipments]['alt'] = __('export_hint_already_in_myparcel', 'woocommerce-myparcel');
+            if (WCMP_Settings_Data::EXPORT_MODE_PPS === $exportMode) {
+                $listingActions[$addShipments]['img'] = "{$pluginUrl}/assets/img/myparcel.svg";
+
+                if ($metaPps[0][self::META_PPS_EXPORTED]) {
+                    $listingActions[$addShipments]['alt'] = __(
+                        'export_hint_already_in_myparcel',
+                        'woocommerce-myparcel'
+                    );
+                }
             }
         }
 
@@ -918,14 +924,20 @@ class WCMYPA_Admin
     public function renderBarcodes(WC_Order $order): void
     {
         $shipments = self::get_order_shipments($order, true);
+        $metaPps   = get_post_meta($order->get_id(), self::META_PPS);
 
-        if (empty($shipments)) {
+        if ($metaPps) {
+            echo sprintf('Order exported %s x to MyParcel', count($metaPps));
+        }
+
+        if (empty($shipments) && ! $metaPps) {
             echo __("No label has been created yet.", "woocommerce-myparcel");
 
             return;
         }
 
         echo '<div class="wcmp__barcodes">';
+
         foreach ($shipments as $shipment_id => $shipment) {
             $shipmentStatusId = $shipment['shipment']['status'];
             $printedStatuses  = [WCMYPA_Admin::ORDER_STATUS_PRINTED_DIGITAL_STAMP, WCMYPA_Admin::ORDER_STATUS_PRINTED_LETTER];

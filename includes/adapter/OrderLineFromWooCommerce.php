@@ -44,7 +44,7 @@ class OrderLineFromWooCommerce extends OrderLine
         $data['uuid']        = (string) ($itemData['variation_id'] ?: $itemData['product_id']);
         $data['sku']         = $wcProduct->get_sku();
         $data['name']        = $itemData['name'];
-        $data['width']       = (int) $wcProduct->get_height() ?: 0;
+        $data['height']      = (int) $wcProduct->get_height() ?: 0;
         $data['length']      = (int) $wcProduct->get_length() ?: 0;
         $data['weight']      = (int) $wcProduct->get_weight() ?: 0;
         $data['width']       = (int) $wcProduct->get_width() ?: 0;

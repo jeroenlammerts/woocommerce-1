@@ -1668,8 +1668,8 @@ class WCMP_Export
             if (! add_post_meta($orderId, WCMYPA_Admin::META_PPS, $value)) {
                 $this->errors[] = sprintf(__('error_pps_export_feedback', 'woocommerce-myparcel'), $orderId);
             }
-// TODO refactor updateOrderStatus to use the correct AFTER_EXPORT not the (arbitrary) default or something else
-            WCMP_API::updateOrderStatus($wcOrder, WCMP_Settings_Data::CHANGE_STATUS_AFTER_PRINTING);
+
+            WCMP_API::updateOrderStatus($wcOrder);
         }
 
         return [

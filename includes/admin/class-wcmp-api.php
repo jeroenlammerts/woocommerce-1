@@ -1,6 +1,7 @@
 <?php
 
 use MyParcelNL\Sdk\src\Helper\MyParcelCollection;
+use MyParcelNL\Sdk\src\Model\MyParcelRequest;
 use WPO\WC\MyParcel\Compatibility\Order as WCX_Order;
 use WPO\WC\MyParcel\Compatibility\WC_Core;
 use WPO\WC\MyParcel\Compatibility\WCMP_ChannelEngine_Compatibility as ChannelEngine;
@@ -15,11 +16,6 @@ if (class_exists('WCMP_API')) {
 
 class WCMP_API extends WCMP_Rest
 {
-    /**
-     * @var string
-     */
-    public $apiUrl = WCMP_Data::API_URL;
-
     /**
      * @var string
      */
@@ -41,7 +37,7 @@ class WCMP_API extends WCMP_Rest
     {
         parent::__construct();
 
-        $this->apiUrl    = WCMP_Data::API_URL;
+        $this->apiUrl    = MyParcelRequest::REQUEST_URL;
         $this->userAgent = $this->getUserAgent();
         $this->key       = (string) $key;
     }
@@ -90,7 +86,7 @@ class WCMP_API extends WCMP_Rest
             "user-agent"    => $this->userAgent,
         ];
 
-        $request_url = $this->apiUrl . $endpoint;
+        $request_url = MyParcelRequest::REQUEST_URL . $endpoint;
 
         return $this->post($request_url, $json, $headers);
     }
@@ -116,7 +112,7 @@ class WCMP_API extends WCMP_Rest
             ],
         ];
 
-        $request_url = $this->apiUrl . $endpoint . "/" . implode(";", (array) $ids);
+        $request_url = MyParcelRequest::REQUEST_URL . $endpoint . '/' . implode(';', (array) $ids);
         $request_url = add_query_arg($params, $request_url);
 
         return $this->get($request_url, $headers);
@@ -183,13 +179,13 @@ class WCMP_API extends WCMP_Rest
      * @param WC_Order $order
      * @param string   $thisMoment
      */
-    public static function updateOrderStatus(WC_Order $order, string $thisMoment): void
+    public static function updateOrderStatus(WC_Order $order, string $thisMoment = ''): void
     {
         $statusAutomation     = WCMYPA()->setting_collection->isEnabled(WCMYPA_Settings::SETTING_ORDER_STATUS_AUTOMATION);
         $momentOfStatusChange = WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_CHANGE_ORDER_STATUS_AFTER);
         $newStatus            = WCMYPA()->setting_collection->getByName(WCMYPA_Settings::SETTING_AUTOMATIC_ORDER_STATUS);
 
-        if ($statusAutomation && $thisMoment === $momentOfStatusChange) {
+        if ($statusAutomation && (! $thisMoment || $thisMoment === $momentOfStatusChange)) {
             $order->update_status(
                 $newStatus,
                 __('myparcel_export', 'woocommerce-myparcel')
