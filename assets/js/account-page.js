@@ -24,8 +24,8 @@ jQuery(document).ready(function($) {
   localize_address_fields('shipping');
 
   $('#billing_country, #shipping_country').change(function() {
-    id = $(this).attr('id');
-    address_type = id.replace('_country', '');
+    var id = $(this).attr('id');
+    var address_type = id.replace('_country', '');
     localize_address_fields(address_type);
   });
 
